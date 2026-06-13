@@ -4,6 +4,33 @@ GET {{TaskManager_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+GET {{TaskManager_HostAddress}}/api/tasks/ 
+Accept: application/json
 
-GET {{TaskManager_HostAddress}}/hello/
+###
+GET {{TaskManager_HostAddress}}/api/tasks/1
+Accept: application/json
+
+###
+POST {{TaskManager_HostAddress}}/api/tasks
+Content-Type: application/json
+{
+  "id": 1,
+  "title": "Read Book",
+  "description": "Head First Design Patterns",
+  "status": 0
+}
+
+###
+PUT {{TaskManager_HostAddress}}/api/tasks/1
+Content-Type: application/json
+{
+  "id": 1,
+  "title": "Changed",
+  "description": "Changed",
+  "status": 0
+}
+
+###
+DELETE {{TaskManager_HostAddress}}/api/tasks/1
 Accept: application/json
