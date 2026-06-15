@@ -15,10 +15,9 @@ Accept: application/json
 POST {{TaskManager_HostAddress}}/api/tasks
 Content-Type: application/json
 {
-  "id": 1,
   "title": "Read Book",
   "description": "Head First Design Patterns",
-  "status": 0
+  "state": 0
 }
 
 ###
@@ -28,9 +27,41 @@ Content-Type: application/json
   "id": 1,
   "title": "Changed",
   "description": "Changed",
-  "status": 0
+  "state": 0
 }
 
 ###
 DELETE {{TaskManager_HostAddress}}/api/tasks/1
+Accept: application/json
+
+###
+GET {{TaskManager_HostAddress}}/api/jobs
+Accept: application/json
+
+###
+GET {{TaskManager_HostAddress}}/api/jobs/1
+Accept: application/json
+
+###
+POST {{TaskManager_HostAddress}}/api/jobs
+Content-Type: application/json
+{
+  "id": 2,
+  "company": "Amazon",
+  "status": 1,
+  "interviewRound": 2
+}
+
+###
+PUT {{TaskManager_HostAddress}}/api/jobs/1
+Content-Type: application/json
+{
+  "id": 1,
+  "company": "NDA",
+  "status": 0,
+  "interviewRound": 0
+}
+
+###
+DELETE {{TaskManager_HostAddress}}/api/jobs/1
 Accept: application/json

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaskManager.Data;
 using TaskManager.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace TaskManager.Controllers
 {
@@ -8,35 +10,23 @@ namespace TaskManager.Controllers
     public class TasksController : ControllerBase
     {
 
-        static private List<MyTask> tasks = new List<MyTask>
+        private readonly MyAPIContext _context;
+        public TasksController(MyAPIContext context)
         {
-            new MyTask
-            {
-                Id =  1, // auto increment
-                Title = "Read Book",
-                Description = "Head First Design Patterns",
-                Status = Status.Created
-            },
-            new MyTask
-            {
-                Id =  2, // auto increment
-                Title = "Read Book",
-                Description = "Cracking the coding Interview",
-                Status = Status.Created
-            }
-        };
+            _context = context;
+        }
 
 
         [HttpGet]
-        public ActionResult<List<MyTask>> Get()
+        public async Task<ActionResult<List<MyTask>>> Get()
         {
-            return Ok(tasks);
+            return Ok(await _context.MyTask.ToListAsync());
         }
 
         [HttpGet("{id}")]
-        public ActionResult<MyTask> GetByID(int id)
+        public async Task<ActionResult<MyTask>> GetByID(int id)
         {
-            MyTask task = tasks.FirstOrDefault(task => task.Id == id);
+            var task = await _context.MyTask.FindAsync(id);
 
             if (task == null)
             {
@@ -47,22 +37,23 @@ namespace TaskManager.Controllers
         }
 
         [HttpPost]
-        public ActionResult<MyTask> Post(MyTask newTask)
+        public async Task<ActionResult<MyTask>> Post(MyTask newTask)
         {
             if (newTask == null)
             {
                 return BadRequest();
             }
 
-            tasks.Add(newTask);
+            _context.MyTask.Add(newTask);
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Post), new {id=newTask.Id});
+            return CreatedAtAction(nameof(Post), new { id = newTask.Id });
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, MyTask newTask)
+        public async Task<IActionResult> Put(int id, MyTask newTask)
         {
-            MyTask task = tasks.FirstOrDefault(x => x.Id == id);
+            var task = await _context.MyTask.FindAsync(id);
 
             if (task == null)
             {
@@ -72,22 +63,25 @@ namespace TaskManager.Controllers
             task.Id = newTask.Id;
             task.Title = newTask.Title;
             task.Description = newTask.Description;
-            task.Status = newTask.Status;
+            task.State = newTask.State;
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            MyTask task = tasks.FirstOrDefault(x => x.Id == id);
+            var task = await _context.MyTask.FindAsync(id);
 
             if (task == null)
             {
                 return NotFound();
             }
 
-            tasks.Remove(task);
+            _context.MyTask.Remove(task);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

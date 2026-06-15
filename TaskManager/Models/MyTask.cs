@@ -1,9 +1,6 @@
-﻿
-
-
-namespace TaskManager.Models
+﻿namespace TaskManager.Models
 {
-    public enum Status
+    public enum TaskState
     {
         Created,
         InProgress,
@@ -14,6 +11,6 @@ namespace TaskManager.Models
         public int Id { get; set; }
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
-        public Status Status { get; set; }
+        public TaskState State { get; set; }
     }
 }
