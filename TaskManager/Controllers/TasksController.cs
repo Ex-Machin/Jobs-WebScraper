@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskManager.Data;
 using TaskManager.Models;
+using TaskManager.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace TaskManager.Controllers
@@ -11,16 +12,21 @@ namespace TaskManager.Controllers
     {
 
         private readonly MyAPIContext _context;
-        public TasksController(MyAPIContext context)
+        private readonly IRepository _repository;
+        public TasksController(
+            MyAPIContext context,
+            IRepository repository
+        )
         {
             _context = context;
+            _repository = repository;
         }
 
 
         [HttpGet]
         public async Task<ActionResult<List<MyTask>>> Get()
         {
-            return Ok(await _context.MyTask.ToListAsync());
+            return Ok(await _repository.GetAllTasks());
         }
 
         [HttpGet("{id}")]

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TaskManager.Data;
 using TaskManager.Models;
 
 namespace TaskManager.Controllers
@@ -7,35 +9,21 @@ namespace TaskManager.Controllers
     [Route("api/[controller]")]
     public class JobsController : ControllerBase
     {
-        public static List<Job> jobs = new List<Job>
+        private readonly MyAPIContext _context;
+        public JobsController(MyAPIContext context)
         {
-            new Job
-            {
-                Id = 1,
-                Company = "Epam",
-                Status = JobStatus.Applied,
-                InterviewRound = 0
-            },
-            new Job
-            {
-                Id = 1,
-                Company = "Google",
-                Status = JobStatus.Accepted,
-                InterviewRound = 7
-            }
-        };
-
-
+            _context = context;
+        }
         [HttpGet]
-        public ActionResult<List<Job>> Get()
+        public async Task<ActionResult<List<Job>>> Get()
         {
-            return Ok(jobs);
+            return Ok(await _context.Job.ToListAsync());
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Job> GetById(int id)
+        public async Task<ActionResult<Job>> GetById(int id)
         {
-            var job = jobs.FirstOrDefault(x => x.Id == id);
+            var job = await _context.Job.FindAsync(id);
 
             if (job == null)
             {
@@ -46,22 +34,23 @@ namespace TaskManager.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Job> Post(Job job)
+        public async Task<ActionResult<Job>> Post(Job job)
         {
             if (job == null)
             {
                 return BadRequest();
             }
 
-            jobs.Add(job);
+            _context.Job.Add(job);
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Post), new {id=job.Id});
+            return CreatedAtAction(nameof(Post), new { id = job.Id });
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Job newJob)
+        public async Task<IActionResult> Put(int id, Job newJob)
         {
-            var job = jobs.FirstOrDefault(x => x.Id == id);
+            var job = await _context.Job.FindAsync(id);
 
             if (job == null)
             {
@@ -73,20 +62,23 @@ namespace TaskManager.Controllers
             job.Status = newJob.Status;
             job.InterviewRound = newJob.InterviewRound;
 
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var job = jobs.FirstOrDefault(x => x.Id == id);
+            var job = await _context.Job.FindAsync(id);
 
             if (job == null)
             {
                 return NotFound();
             }
 
-            jobs.Remove(job);
+            _context.Job.Remove(job);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

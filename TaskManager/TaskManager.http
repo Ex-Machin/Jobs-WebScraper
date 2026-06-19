@@ -45,8 +45,7 @@ Accept: application/json
 ###
 POST {{TaskManager_HostAddress}}/api/jobs
 Content-Type: application/json
-{
-  "id": 2,
+{ 
   "company": "Amazon",
   "status": 1,
   "interviewRound": 2
