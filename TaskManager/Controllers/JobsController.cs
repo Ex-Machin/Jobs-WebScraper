@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Data;
 using TaskManager.Models;
+using TaskManager.Services;
 
 namespace TaskManager.Controllers
 {
@@ -9,21 +10,21 @@ namespace TaskManager.Controllers
     [Route("api/[controller]")]
     public class JobsController : ControllerBase
     {
-        private readonly MyAPIContext _context;
-        public JobsController(MyAPIContext context)
+        private readonly IJobsRepository _repository;
+        public JobsController(IJobsRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
         [HttpGet]
         public async Task<ActionResult<List<Job>>> Get()
         {
-            return Ok(await _context.Job.ToListAsync());
+            return Ok(await _repository.GetAllJobs());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Job>> GetById(int id)
         {
-            var job = await _context.Job.FindAsync(id);
+            var job = await _repository.GetJobById(id);
 
             if (job == null)
             {
@@ -41,8 +42,7 @@ namespace TaskManager.Controllers
                 return BadRequest();
             }
 
-            _context.Job.Add(job);
-            await _context.SaveChangesAsync();
+            await _repository.AddJob(job);
 
             return CreatedAtAction(nameof(Post), new { id = job.Id });
         }
@@ -50,19 +50,15 @@ namespace TaskManager.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, Job newJob)
         {
-            var job = await _context.Job.FindAsync(id);
+            var job = await _repository.GetJobById(id);
 
             if (job == null)
             {
                 return NotFound();
             }
 
-            job.Id = newJob.Id;
-            job.Company = newJob.Company;
-            job.Status = newJob.Status;
-            job.InterviewRound = newJob.InterviewRound;
+            await _repository.PutJob(job, newJob);
 
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -70,15 +66,14 @@ namespace TaskManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var job = await _context.Job.FindAsync(id);
+            var job = await _repository.GetJobById(id);
 
             if (job == null)
             {
                 return NotFound();
             }
 
-            _context.Job.Remove(job);
-            await _context.SaveChangesAsync();
+            await _repository.DeleteJob(job);
 
             return NoContent();
         }

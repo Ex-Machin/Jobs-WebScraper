@@ -8,7 +8,7 @@ GET {{TaskManager_HostAddress}}/api/tasks/
 Accept: application/json
 
 ###
-GET {{TaskManager_HostAddress}}/api/tasks/1
+GET {{TaskManager_HostAddress}}/api/tasks/2
 Accept: application/json
 
 ###
@@ -21,17 +21,16 @@ Content-Type: application/json
 }
 
 ###
-PUT {{TaskManager_HostAddress}}/api/tasks/1
+PUT {{TaskManager_HostAddress}}/api/tasks/2
 Content-Type: application/json
 {
-  "id": 1,
   "title": "Changed",
   "description": "Changed",
   "state": 0
 }
 
 ###
-DELETE {{TaskManager_HostAddress}}/api/tasks/1
+DELETE {{TaskManager_HostAddress}}/api/tasks/4
 Accept: application/json
 
 ###
@@ -39,7 +38,7 @@ GET {{TaskManager_HostAddress}}/api/jobs
 Accept: application/json
 
 ###
-GET {{TaskManager_HostAddress}}/api/jobs/1
+GET {{TaskManager_HostAddress}}/api/jobs/2
 Accept: application/json
 
 ###
@@ -52,7 +51,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{TaskManager_HostAddress}}/api/jobs/1
+PUT {{TaskManager_HostAddress}}/api/jobs/5
 Content-Type: application/json
 {
   "id": 1,
@@ -62,5 +61,5 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{TaskManager_HostAddress}}/api/jobs/1
+DELETE {{TaskManager_HostAddress}}/api/jobs/4
 Accept: application/json

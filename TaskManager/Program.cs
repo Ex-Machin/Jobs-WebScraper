@@ -14,7 +14,8 @@ builder.Services.AddDbContext<MyAPIContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 //builder.Services.AddScoped<IRepository, Repository>();
-builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<IJobsRepository, JobsRepository>();
 
 var app = builder.Build();
 

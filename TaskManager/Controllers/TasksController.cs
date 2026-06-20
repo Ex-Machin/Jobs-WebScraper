@@ -11,14 +11,9 @@ namespace TaskManager.Controllers
     public class TasksController : ControllerBase
     {
 
-        private readonly MyAPIContext _context;
-        private readonly IRepository _repository;
-        public TasksController(
-            MyAPIContext context,
-            IRepository repository
-        )
+        private readonly ITaskRepository _repository;
+        public TasksController(ITaskRepository repository)
         {
-            _context = context;
             _repository = repository;
         }
 
@@ -32,7 +27,7 @@ namespace TaskManager.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MyTask>> GetByID(int id)
         {
-            var task = await _context.MyTask.FindAsync(id);
+            var task = await _repository.GetTaskById(id);
 
             if (task == null)
             {
@@ -50,8 +45,7 @@ namespace TaskManager.Controllers
                 return BadRequest();
             }
 
-            _context.MyTask.Add(newTask);
-            await _context.SaveChangesAsync();
+            await _repository.AddTask(newTask);
 
             return CreatedAtAction(nameof(Post), new { id = newTask.Id });
         }
@@ -59,19 +53,13 @@ namespace TaskManager.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, MyTask newTask)
         {
-            var task = await _context.MyTask.FindAsync(id);
+            var task = await _repository.GetTaskById(id);
 
             if (task == null)
             {
                 return NotFound();
             }
-
-            task.Id = newTask.Id;
-            task.Title = newTask.Title;
-            task.Description = newTask.Description;
-            task.State = newTask.State;
-
-            await _context.SaveChangesAsync();
+            await _repository.PutTask(task, newTask);
 
             return NoContent();
         }
@@ -79,15 +67,14 @@ namespace TaskManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var task = await _context.MyTask.FindAsync(id);
+            var task = await _repository.GetTaskById(id);
 
             if (task == null)
             {
                 return NotFound();
             }
 
-            _context.MyTask.Remove(task);
-            await _context.SaveChangesAsync();
+            await _repository.DeleteTask(task);
 
             return NoContent();
         }
