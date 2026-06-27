@@ -1,15 +1,15 @@
-@TaskManager_HostAddress = http://localhost:5235
+@JobsWebScraper_HostAddress = http://localhost:5235
 
 ###
-GET {{TaskManager_HostAddress}}/api/tasks/ 
+GET {{JobsWebScraper_HostAddress}}/api/tasks/ 
 Accept: application/json
 
 ###
-GET {{TaskManager_HostAddress}}/api/tasks/2
+GET {{JobsWebScraper_HostAddress}}/api/tasks/2
 Accept: application/json
 
 ###
-POST {{TaskManager_HostAddress}}/api/tasks
+POST {{JobsWebScraper_HostAddress}}/api/tasks
 Content-Type: application/json
 {
   "title": "Read Book",
@@ -18,7 +18,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{TaskManager_HostAddress}}/api/tasks/2
+PUT {{JobsWebScraper_HostAddress}}/api/tasks/2
 Content-Type: application/json
 {
   "title": "Changed",
@@ -27,19 +27,19 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{TaskManager_HostAddress}}/api/tasks/4
+DELETE {{JobsWebScraper_HostAddress}}/api/tasks/4
 Accept: application/json
 
 ###
-GET {{TaskManager_HostAddress}}/api/jobs
+GET {{JobsWebScraper_HostAddress}}/api/jobs
 Accept: application/json
 
 ###
-GET {{TaskManager_HostAddress}}/api/jobs/2
+GET {{JobsWebScraper_HostAddress}}/api/jobs/2
 Accept: application/json
 
 ###
-POST {{TaskManager_HostAddress}}/api/jobs
+POST {{JobsWebScraper_HostAddress}}/api/jobs
 Content-Type: application/json
 { 
   "company": "Amazon",
@@ -48,7 +48,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{TaskManager_HostAddress}}/api/jobs/5
+PUT {{JobsWebScraper_HostAddress}}/api/jobs/5
 Content-Type: application/json
 {
   "id": 1,
@@ -58,9 +58,9 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{TaskManager_HostAddress}}/api/jobs/5
+DELETE {{JobsWebScraper_HostAddress}}/api/jobs/5
 Accept: application/json
 
 ###
-POST {{TaskManager_HostAddress}}/api/automation
+POST {{JobsWebScraper_HostAddress}}/api/automation
 Content-Type: application/json
