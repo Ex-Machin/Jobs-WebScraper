@@ -16,6 +16,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 //builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IJobsRepository, JobsRepository>();
+builder.Services.AddScoped<IAutomationService, AutomationService>();
 
 var app = builder.Build();
 

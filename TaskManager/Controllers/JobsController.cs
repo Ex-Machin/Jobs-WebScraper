@@ -11,9 +11,11 @@ namespace TaskManager.Controllers
     public class JobsController : ControllerBase
     {
         private readonly IJobsRepository _repository;
-        public JobsController(IJobsRepository repository)
+        private readonly IAutomationService _automation;
+        public JobsController(IJobsRepository repository, IAutomationService automation)
         {
             _repository = repository;
+            _automation = automation;
         }
         [HttpGet]
         public async Task<ActionResult<List<Job>>> Get()

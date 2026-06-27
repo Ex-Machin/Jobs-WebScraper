@@ -34,6 +34,10 @@ namespace TaskManager.Services
             job.Company = newJob.Company;
             job.Status = newJob.Status;
             job.InterviewRound = newJob.InterviewRound;
+            job.City = newJob.City;
+            job.Departement = newJob.Departement;
+            job.Region = newJob.Region;
+            job.Title = newJob.Title;
 
             await _context.SaveChangesAsync();
         }

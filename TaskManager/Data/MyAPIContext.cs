@@ -29,22 +29,6 @@ namespace TaskManager.Data
                     State = TaskState.Created
                 }
             );
-
-            modelBuilder.Entity<Job>().HasData(
-                new Job
-                {
-                    Id = 1,
-                    Company = "Epam",
-                    Status = JobStatus.Applied,
-                    InterviewRound = 0
-                },
-                new Job
-                {
-                    Id = 2,
-                    Company = "Google",
-                    Status = JobStatus.Accepted,
-                    InterviewRound = 7
-                });
         }
         public DbSet<MyTask> MyTask { get; set; }
         public DbSet<Job> Job { get; set; }

@@ -1,8 +1,5 @@
 @TaskManager_HostAddress = http://localhost:5235
 
-GET {{TaskManager_HostAddress}}/weatherforecast/
-Accept: application/json
-
 ###
 GET {{TaskManager_HostAddress}}/api/tasks/ 
 Accept: application/json
@@ -61,5 +58,9 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{TaskManager_HostAddress}}/api/jobs/4
+DELETE {{TaskManager_HostAddress}}/api/jobs/5
 Accept: application/json
+
+###
+POST {{TaskManager_HostAddress}}/api/automation
+Content-Type: application/json
