@@ -29,6 +29,20 @@ namespace TaskManager.Data
                     State = TaskState.Created
                 }
             );
+
+            modelBuilder.Entity<Job>().HasData(
+                new Job
+                {
+                    Id = 1,
+                    Title = "Software Developer",
+                    Company = "EPAM",
+                    Status = 0,
+                    InterviewRound = 1,
+                    Departement = "asd",
+                    Region = "sda",
+                    City = "dfs"
+                }
+           );
         }
         public DbSet<MyTask> MyTask { get; set; }
         public DbSet<Job> Job { get; set; }

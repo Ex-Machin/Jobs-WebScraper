@@ -7,7 +7,7 @@ using TaskManager.Data;
 
 #nullable disable
 
-namespace TaskManager.Migrations
+namespace JobsWebScraper.Migrations
 {
     [DbContext(typeof(MyAPIContext))]
     partial class MyAPIContextModelSnapshot : ModelSnapshot
@@ -58,6 +58,19 @@ namespace TaskManager.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Job");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            City = "dfs",
+                            Company = "EPAM",
+                            Departement = "asd",
+                            InterviewRound = 1,
+                            Region = "sda",
+                            Status = 0,
+                            Title = "Software Developer"
+                        });
                 });
 
             modelBuilder.Entity("TaskManager.Models.MyTask", b =>

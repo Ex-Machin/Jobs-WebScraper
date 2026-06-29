@@ -19,34 +19,20 @@ namespace TaskManager.Services
 
     public class AutomationService : IAutomationService
     {
-        private readonly MyAPIContext _context;
         private readonly IJobsRepository _repository;
 
-        public AutomationService(MyAPIContext context, IJobsRepository repository)
+        public AutomationService(IJobsRepository repository)
         {
-            _context = context;
             _repository = repository;
         }
 
 
         public async Task<int> RunAutomation()
         {
-
-            //try
-            //{
-
-
-
             //string url = "https://bluestonepim.bamboohr.com/careers/";
             //string url = $"https://kariera.comarch.pl/praca/"; 
             //string url = $"https://www.bgk.pl/kariera-w-bgk/oferty-pracy-i-praktyk/";
 
-            //HtmlNodeCollection productNodes = htmlDocument.DocumentNode.SelectNodes(xpath);
-
-            //if (productNodes == null)
-            //{
-            //    return 0;
-            //}
             string company = "issworld";
             string fullUrl = "https://www.pl.issworld.com/kariera/oferty-pracy";
             var options = new ChromeOptions()
@@ -62,35 +48,39 @@ namespace TaskManager.Services
             htmlDoc.LoadHtml(browser.PageSource);
             HtmlNodeCollection jobsList = htmlDoc.DocumentNode.SelectNodes(".//tr[@class='skk_row_odd'] | .//tr[@class='skk_row_even']");
 
+            List<Job> currentJobs = await _repository.GetAllJobs();
+            List<string> currentJobsTitles = new List<string>();
+
+            foreach (Job job in currentJobs)
+            {
+                currentJobsTitles.Add(job.Title);
+            }
+
             foreach (var job in jobsList)
             {
                 var title = job.InnerText;
-                var department = job.ChildNodes[1].InnerText;
-                var region = job.ChildNodes[2].InnerText;
-                var city = job.ChildNodes[2].InnerText;
+                if (!currentJobsTitles.Contains(title)) // optimize by getting only current company
+                {
+                    var department = job.ChildNodes[1].InnerText;
+                    var region = job.ChildNodes[2].InnerText;
+                    var city = job.ChildNodes[2].InnerText;
 
-                Job newJob = new Job();
+                    Job newJob = new Job();
 
-                newJob.Title = title.ToString();
-                newJob.Departement = department.ToString();
-                newJob.Region = region.ToString();
-                newJob.City = city.ToString();
-                newJob.Company = company;
-                newJob.Status = 0;
-                newJob.InterviewRound = 0;
+                    newJob.Title = title.ToString();
+                    newJob.Departement = department.ToString();
+                    newJob.Region = region.ToString();
+                    newJob.City = city.ToString();
+                    newJob.Company = company;
+                    newJob.Status = 0;
+                    newJob.InterviewRound = 0;
 
-                await _repository.AddJob(newJob);
-                recordsUpdatedTotal++;
+                    await _repository.AddJob(newJob);
+                    recordsUpdatedTotal++;
+                }
             }
 
-            //await _context.SaveChangesAsync();
             return recordsUpdatedTotal;
-            //}
-            //catch (HttpRequestException e)
-            //{
-            //Console.WriteLine("\nException Caught!");
-            //Console.WriteLine("Message :{0} ", e.Message);
-            //}
         }
     }
 }

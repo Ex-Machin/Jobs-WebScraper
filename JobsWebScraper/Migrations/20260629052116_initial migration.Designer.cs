@@ -8,11 +8,11 @@ using TaskManager.Data;
 
 #nullable disable
 
-namespace TaskManager.Migrations
+namespace JobsWebScraper.Migrations
 {
     [DbContext(typeof(MyAPIContext))]
-    [Migration("20260615064829_task model default")]
-    partial class taskmodeldefault
+    [Migration("20260629052116_initial migration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,58 @@ namespace TaskManager.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("TaskManager.Models.Job", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Company")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Departement")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InterviewRound")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Job");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            City = "dfs",
+                            Company = "EPAM",
+                            Departement = "asd",
+                            InterviewRound = 1,
+                            Region = "sda",
+                            Status = 0,
+                            Title = "Software Developer"
+                        });
+                });
 
             modelBuilder.Entity("TaskManager.Models.MyTask", b =>
                 {
