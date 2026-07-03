@@ -58,7 +58,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{JobsWebScraper_HostAddress}}/api/jobs/5
+DELETE {{JobsWebScraper_HostAddress}}/api/jobs/1
 Accept: application/json
 
 ###
