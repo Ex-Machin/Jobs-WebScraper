@@ -111,10 +111,10 @@ namespace TaskManager.Services
                 newJob.Status = 0;
                 newJob.InterviewRound = 0;
 
-                await _repository.AddJob(newJob);
-
-
+                jobsLink.Add(newJob);
             }
+
+            await _repository.AddJobs(jobsLink);
 
         }
 

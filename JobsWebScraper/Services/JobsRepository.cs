@@ -29,6 +29,12 @@ namespace TaskManager.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task AddJobs(List<Job> jobs)
+        {
+            _context.Job.AddRange(jobs);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task PutJob(Job job, Job newJob)
         {
             job.Company = newJob.Company;

@@ -7,6 +7,7 @@ namespace TaskManager.Services
         Task<List<Job>> GetAllJobs();
         Task<Job> GetJobById(int id);
         Task AddJob(Job newJob);
+        Task AddJobs(List<Job> jobs);
         Task PutJob(Job job, Job newJob);
         Task DeleteJob(Job job);
         Task DeleteJobByCompany(string companyName);

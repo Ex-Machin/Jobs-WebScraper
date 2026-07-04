@@ -7,4 +7,3 @@ string url = "https://kariera.comarch.pl/praca/";
 string url = "https://www.bgk.pl/kariera-w-bgk/oferty-pracy-i-praktyk/";
 
 ## TO DO ##
- - add bulk jobs instead of one by one
