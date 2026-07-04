@@ -48,7 +48,7 @@ Content-Type: application/json
   "city": "Gdansk",
   "Title": "Software developer",
   "Region": "pomorskie",
-  "Departement": "IT"
+  "Department": "IT"
 }
 
 ###

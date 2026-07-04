@@ -104,7 +104,7 @@ namespace TaskManager.Services
                 Job newJob = new Job();
 
                 newJob.Title = title.ToString();
-                newJob.Departement = department.ToString();
+                newJob.Department = department.ToString();
                 newJob.Region = region.ToString();
                 newJob.City = city.ToString();
                 newJob.Company = company;

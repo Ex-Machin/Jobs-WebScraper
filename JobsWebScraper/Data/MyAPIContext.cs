@@ -38,7 +38,7 @@ namespace TaskManager.Data
                     Company = "EPAM",
                     Status = 0,
                     InterviewRound = 1,
-                    Departement = "asd",
+                    Department = "asd",
                     Region = "sda",
                     City = "dfs"
                 }

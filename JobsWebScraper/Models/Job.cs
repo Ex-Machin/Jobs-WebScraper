@@ -15,7 +15,7 @@
         public int InterviewRound { get; set; }
 
         public string Title { get; set; } = null!;
-        public string Departement { get; set; } = null!; // to fix department*
+        public string Department { get; set; } = null!;
         public string Region { get; set; } = null!;
         public string City { get; set; } = null!;
     }

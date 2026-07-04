@@ -35,7 +35,7 @@ namespace TaskManager.Services
             job.Status = newJob.Status;
             job.InterviewRound = newJob.InterviewRound;
             job.City = newJob.City;
-            job.Departement = newJob.Departement;
+            job.Department = newJob.Department;
             job.Region = newJob.Region;
             job.Title = newJob.Title;
 
