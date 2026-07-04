@@ -9,5 +9,6 @@ namespace TaskManager.Services
         Task AddJob(Job newJob);
         Task PutJob(Job job, Job newJob);
         Task DeleteJob(Job job);
+        Task DeleteJobByCompany(string companyName);
     }
 }

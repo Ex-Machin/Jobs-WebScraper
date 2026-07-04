@@ -44,7 +44,11 @@ Content-Type: application/json
 { 
   "company": "Amazon",
   "status": 1,
-  "interviewRound": 2
+  "interviewRound": 2,
+  "city": "Gdansk",
+  "Title": "Software developer",
+  "Region": "pomorskie",
+  "Departement": "IT"
 }
 
 ###
@@ -61,6 +65,10 @@ Content-Type: application/json
 DELETE {{JobsWebScraper_HostAddress}}/api/jobs/1
 Accept: application/json
 
-###
+### will timeout
 POST {{JobsWebScraper_HostAddress}}/api/automation
+Content-Type: application/json
+
+###
+DELETE {{JobsWebScraper_HostAddress}}/api/jobs/bulk/issworld
 Content-Type: application/json

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Data;
 using TaskManager.Models;
@@ -76,6 +77,14 @@ namespace TaskManager.Controllers
             }
 
             await _repository.DeleteJob(job);
+
+            return NoContent();
+        }
+
+        [HttpDelete("bulk/{companyName}")]
+        public async Task<IActionResult> Delete(string companyName)
+        {
+            await _repository.DeleteJobByCompany(companyName);
 
             return NoContent();
         }

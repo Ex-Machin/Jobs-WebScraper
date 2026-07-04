@@ -47,5 +47,10 @@ namespace TaskManager.Services
             _context.Remove(job);
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeleteJobByCompany(string companyName)
+        {
+            await _context.Job.Where(j => j.Company == companyName).ExecuteDeleteAsync();
+        }
     }
 }

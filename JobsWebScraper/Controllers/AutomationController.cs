@@ -16,7 +16,6 @@ namespace TaskManager.Controllers
             _automation = automation;
         }
         [HttpPost]
-        //[RequestTimeout(milliseconds: 100000)] // expensivev API call
         public async Task<IActionResult> Post()
         {
             await _automation.RunAutomation();
