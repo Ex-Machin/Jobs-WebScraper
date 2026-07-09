@@ -15,12 +15,14 @@ namespace TaskManager.Controllers
         {
             _automation = automation;
         }
-        [HttpPost]
+        [HttpPost("all")]
         public async Task<IActionResult> Post()
         {
-            await _automation.RunAutomation();
+            //await _automation.RunAutomationISS();
+            await _automation.RunAutomationMacgregor();
 
             return Ok();
         }
     }
 }
+ 

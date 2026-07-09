@@ -7,3 +7,6 @@ string url = "https://kariera.comarch.pl/praca/";
 string url = "https://www.bgk.pl/kariera-w-bgk/oferty-pracy-i-praktyk/";
 
 ## TO DO ##
+- encapsulate selenium scraper
+- create a base class for automation service
+- 

@@ -2,6 +2,7 @@
 {
     public interface IAutomationService
     {
-        Task<int> RunAutomation();
+        Task<int> RunAutomationISS();
+        Task<int> RunAutomationMacgregor();
     }
 }

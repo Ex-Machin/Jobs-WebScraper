@@ -64,7 +64,13 @@ namespace TaskManager.Services
             _ex.ExecuteScript("arguments[0].click();", element);
             _actions.MoveToElement(element).Click().Perform();
             Thread.Sleep(5000);
+        }
 
+        public async Task ClickElementAsync(IWebElement element, int timeoutSeconds = 10)
+        {
+            _ex.ExecuteScript("arguments[0].click();", element);
+            _actions.MoveToElement(element).Click();
+            Thread.Sleep(5000);
         }
 
         public async Task SendKeysAsync(By by, string text)
@@ -84,11 +90,10 @@ namespace TaskManager.Services
             _repository = repository;
         }
 
-        private async Task scrapeJobs(string company)
+        private async Task scrapeJobsISS(string company)
         {
 
             ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tr[@class='skk_row_odd'] | .//tr[@class='skk_row_even']"));
-            Console.WriteLine(jobsList);
 
             List<Job> jobsLink = new List<Job>();
 
@@ -118,8 +123,39 @@ namespace TaskManager.Services
 
         }
 
+        private async Task scrapeJobsMacgregor(string company)
+        {
+            ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tr[@class='data-row']"));
 
-        public async Task<int> RunAutomation()
+            List<Job> jobsLink = new List<Job>();
+
+            foreach (var job in jobsList)
+            {
+                var title = job.FindElement(By.ClassName("jobTitle-link"));
+                string titleText = title.GetAttribute("innerHTML");
+                string link = title.GetAttribute("href");
+                string department = job.FindElement(By.ClassName("jobFacility")).Text;
+                string[] location = job.FindElement(By.XPath(".//span[@class='jobLocation']")).Text.Split(',');
+
+                Job newJob = new Job();
+
+                newJob.Title = titleText.ToString();
+                newJob.Department = department.ToString();
+                newJob.Region = location[1].Trim(' ');
+                newJob.City = location[0];
+                newJob.Company = company;
+                newJob.Status = 0;
+                newJob.InterviewRound = 0;
+
+                jobsLink.Add(newJob);
+
+            }
+
+            await _repository.AddJobs(jobsLink);
+        }
+
+
+        public async Task<int> RunAutomationISS()
         {
             string company = "issworld";
             string fullUrl = "https://www.pl.issworld.com/kariera/oferty-pracy#skk-container";
@@ -134,12 +170,38 @@ namespace TaskManager.Services
             // delete eveything to make sure everything is up to date
             await _repository.DeleteJobByCompany(company);
 
-            await scrapeJobs(company);
+            await scrapeJobsISS(company);
 
             foreach (int _ in Enumerable.Range(1, lastPagerCount))
             {
                 await scraper.ClickElementAsync(By.XPath(".//a[@class='skk_pager_next']"));
-                await scrapeJobs(company);
+                await scrapeJobsISS(company);
+            }
+
+            return recordsUpdatedTotal;
+        }
+
+        public async Task<int> RunAutomationMacgregor()
+        {
+            string company = "macgregor";
+            string fullUrl = "https://careers.macgregor.com/search";
+
+            await scraper.GetHtmlAsync(fullUrl);
+
+            int recordsUpdatedTotal = 0;
+
+            var pagination = await scraper.WaitForElementsAsync(By.XPath(".//ul[@class='pagination']//li"));
+
+            // delete eveything to make sure everything is up to date
+            await _repository.DeleteJobByCompany(company);
+
+            await scrapeJobsMacgregor(company);
+
+            for (int i = 2; i < pagination.Count - 1; i++)
+            {
+                var page = await scraper.WaitForElementAsync(By.XPath($".//a[@title='Page {i}']"));
+                await scraper.ClickElementAsync(page);
+                await scrapeJobsMacgregor(company);
             }
 
             return recordsUpdatedTotal;
