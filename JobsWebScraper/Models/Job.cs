@@ -18,5 +18,6 @@
         public string Department { get; set; } = null!;
         public string Region { get; set; } = null!;
         public string City { get; set; } = null!;
+        public string Link { get; set; } = null!;
     }
 }

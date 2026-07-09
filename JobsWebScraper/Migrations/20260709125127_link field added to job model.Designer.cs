@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaskManager.Data;
 
@@ -10,9 +11,11 @@ using TaskManager.Data;
 namespace JobsWebScraper.Migrations
 {
     [DbContext(typeof(MyAPIContext))]
-    partial class MyAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20260709125127_link field added to job model")]
+    partial class linkfieldaddedtojobmodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

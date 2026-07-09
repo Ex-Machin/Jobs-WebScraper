@@ -44,6 +44,7 @@ namespace TaskManager.Services
             job.Department = newJob.Department;
             job.Region = newJob.Region;
             job.Title = newJob.Title;
+            job.Link = newJob.Link;
 
             await _context.SaveChangesAsync();
         }

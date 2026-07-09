@@ -115,6 +115,7 @@ namespace TaskManager.Services
                 newJob.Company = company;
                 newJob.Status = 0;
                 newJob.InterviewRound = 0;
+                newJob.Link = "";
 
                 jobsLink.Add(newJob);
             }
@@ -146,6 +147,7 @@ namespace TaskManager.Services
                 newJob.Company = company;
                 newJob.Status = 0;
                 newJob.InterviewRound = 0;
+                newJob.Link = link.ToString();
 
                 jobsLink.Add(newJob);
 
