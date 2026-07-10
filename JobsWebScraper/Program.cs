@@ -19,6 +19,8 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IJobsRepository, JobsRepository>();
 builder.Services.AddScoped<IAutomationService, AutomationService>();
+builder.Services.AddCors();
+
 
 var app = builder.Build();
 
@@ -26,6 +28,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    app.UseCors(builder => builder
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
 }
 
 app.UseHttpsRedirection();
