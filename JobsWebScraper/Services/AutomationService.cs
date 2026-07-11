@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using JobsWebScraper.Services;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
@@ -9,77 +10,6 @@ using TaskManager.Models;
 
 namespace TaskManager.Services
 {
-    public class SeleniumScraper : IDisposable
-    {
-        private readonly IWebDriver _driver;
-        private readonly Actions _actions;
-        private readonly IJavaScriptExecutor _ex;
-
-        public SeleniumScraper()
-        {
-            // close previous sessions (if any)
-            try
-            {
-                Dispose();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"no previous sessions: {ex.ToString()}");
-            }
-
-            var options = new ChromeOptions();
-            options.AddArgument("--headless");
-            _driver = new ChromeDriver(options);
-            _actions = new Actions(_driver);
-            _ex = (IJavaScriptExecutor)_driver;
-        }
-
-        public async Task<string> GetHtmlAsync(string url)
-        {
-            await Task.Run(() => _driver.Navigate().GoToUrl(url));
-            return _driver.PageSource;
-        }
-
-        public void Dispose()
-        {
-            _driver?.Quit();
-            _driver?.Dispose();
-        }
-
-        public async Task<ReadOnlyCollection<IWebElement>> WaitForElementsAsync(By by, int timeoutSeconds = 10)
-        {
-            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeoutSeconds));
-            return await Task.Run(() => wait.Until(d => d.FindElements(by)));
-        }
-        public async Task<IWebElement> WaitForElementAsync(By by, int timeoutSeconds = 10)
-        {
-            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeoutSeconds));
-            var el = await Task.Run(() => wait.Until(d => d.FindElement(by)));
-            return el;
-        }
-
-        public async Task ClickElementAsync(By by, int timeoutSeconds = 10)
-        {
-            var element = await WaitForElementAsync(by, timeoutSeconds);
-            _ex.ExecuteScript("arguments[0].click();", element);
-            _actions.MoveToElement(element).Click().Perform();
-            Thread.Sleep(5000);
-        }
-
-        public async Task ClickElementAsync(IWebElement element, int timeoutSeconds = 10)
-        {
-            _ex.ExecuteScript("arguments[0].click();", element);
-            _actions.MoveToElement(element).Click();
-            Thread.Sleep(5000);
-        }
-
-        public async Task SendKeysAsync(By by, string text)
-        {
-            var element = await WaitForElementAsync(by);
-            await Task.Run(() => element.SendKeys(text));
-        }
-    }
-
     public class AutomationService : IAutomationService
     {
         private readonly IJobsRepository _repository;
@@ -88,6 +18,18 @@ namespace TaskManager.Services
         public AutomationService(IJobsRepository repository)
         {
             _repository = repository;
+        }
+
+        private void createNewJob(Job newJob, string title, string department, string region, string city, string company, string link = "")
+        {
+            newJob.Title = title.ToString();
+            newJob.Department = department.ToString();
+            newJob.Region = region.ToString();
+            newJob.City = city.ToString();
+            newJob.Company = company;
+            newJob.Status = 0;
+            newJob.InterviewRound = 0;
+            newJob.Link = link;
         }
 
         private async Task scrapeJobsISS(string company)
@@ -101,21 +43,13 @@ namespace TaskManager.Services
             {
                 var columns = job.FindElements(By.TagName("td"));
                 string title = columns[0].GetAttribute("textContent");
-
                 var department = columns[1].GetAttribute("textContent");
                 var region = columns[2].GetAttribute("textContent");
                 var city = columns[3].GetAttribute("textContent");
 
                 Job newJob = new Job();
 
-                newJob.Title = title.ToString();
-                newJob.Department = department.ToString();
-                newJob.Region = region.ToString();
-                newJob.City = city.ToString();
-                newJob.Company = company;
-                newJob.Status = 0;
-                newJob.InterviewRound = 0;
-                newJob.Link = "";
+                createNewJob(newJob, title, department, region, city, company);
 
                 jobsLink.Add(newJob);
             }
@@ -132,22 +66,18 @@ namespace TaskManager.Services
 
             foreach (var job in jobsList)
             {
-                var title = job.FindElement(By.ClassName("jobTitle-link"));
-                string titleText = title.GetAttribute("innerHTML");
-                string link = title.GetAttribute("href");
+                var titleLink = job.FindElement(By.ClassName("jobTitle-link"));
+                var title = titleLink.GetAttribute("innerHTML");
+                string link = titleLink.GetAttribute("href");
                 string department = job.FindElement(By.ClassName("jobFacility")).Text;
                 string[] location = job.FindElement(By.XPath(".//span[@class='jobLocation']")).Text.Split(',');
+                string region = location[1].Trim(' ');
+                string city = location[0];
+
 
                 Job newJob = new Job();
 
-                newJob.Title = titleText.ToString();
-                newJob.Department = department.ToString();
-                newJob.Region = location[1].Trim(' ');
-                newJob.City = location[0];
-                newJob.Company = company;
-                newJob.Status = 0;
-                newJob.InterviewRound = 0;
-                newJob.Link = link.ToString();
+                createNewJob(newJob, title, department, region, city, company, link);
 
                 jobsLink.Add(newJob);
 
@@ -167,7 +97,7 @@ namespace TaskManager.Services
             int recordsUpdatedTotal = 0;
 
             var lastPagerEl = await scraper.WaitForElementAsync(By.XPath(".//a[@class='skk_pager_last']"));
-            int lastPagerCount = Int32.Parse(lastPagerEl.Text) - 1;
+            int lastPagerCount = Int32.Parse(lastPagerEl.Text) - 2;
 
             // delete eveything to make sure everything is up to date
             await _repository.DeleteJobByCompany(company);
