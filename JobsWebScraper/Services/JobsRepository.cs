@@ -38,13 +38,11 @@ namespace TaskManager.Services
         public async Task PutJob(Job job, Job newJob)
         {
             job.Company = newJob.Company;
-            job.Status = newJob.Status;
-            job.InterviewRound = newJob.InterviewRound;
             job.City = newJob.City;
             job.Department = newJob.Department;
-            job.Region = newJob.Region;
             job.Title = newJob.Title;
             job.Link = newJob.Link;
+            job.DatePublished = newJob.DatePublished;
 
             await _context.SaveChangesAsync();
         }

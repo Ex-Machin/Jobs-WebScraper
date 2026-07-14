@@ -4,5 +4,6 @@
     {
         Task<int> RunAutomationISS();
         Task<int> RunAutomationMacgregor();
+        Task<int> RunAutomationAlior();
     }
 }

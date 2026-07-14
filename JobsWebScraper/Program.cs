@@ -21,7 +21,6 @@ builder.Services.AddScoped<IJobsRepository, JobsRepository>();
 builder.Services.AddScoped<IAutomationService, AutomationService>();
 builder.Services.AddCors();
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
