@@ -1,12 +1,6 @@
 Simple API for scraping Poland jobs in Gdansk/Sopot/Gdynia
 
-Websites to do:
+Websites to do progress: https://docs.google.com/spreadsheets/d/1NzOBiOtOP1hIl2z3EnZsmrcXN-LUwF9H_Vi0i3h0dpU/edit?gid=0#gid=0
 
-string url = "https://bluestonepim.bamboohr.com/careers/";
-string url = "https://kariera.comarch.pl/praca/"; 
-string url = "https://www.bgk.pl/kariera-w-bgk/oferty-pracy-i-praktyk/";
 
-## TO DO ##
-- encapsulate selenium scraper
-- create a base class for automation service
-- 
+
