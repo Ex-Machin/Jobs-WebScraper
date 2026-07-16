@@ -1,11 +1,5 @@
 ﻿namespace TaskManager.Models
 {
-    public enum JobStatus
-    {
-        Applied,
-        Rejected,
-        Accepted
-    }
     public class Job
     {
 

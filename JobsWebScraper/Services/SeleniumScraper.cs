@@ -11,6 +11,7 @@ namespace JobsWebScraper.Services
         private readonly IWebDriver _driver;
         private readonly Actions _actions;
         private readonly IJavaScriptExecutor _ex;
+        private readonly Random _rnd;
 
         public SeleniumScraper()
         {
@@ -29,6 +30,7 @@ namespace JobsWebScraper.Services
             _driver = new ChromeDriver(options);
             _actions = new Actions(_driver);
             _ex = (IJavaScriptExecutor)_driver;
+            _rnd = new Random();
         }
 
         public async Task<string> GetHtmlAsync(string url)
@@ -60,14 +62,16 @@ namespace JobsWebScraper.Services
             var element = await WaitForElementAsync(by, timeoutSeconds);
             _ex.ExecuteScript("arguments[0].click();", element);
             _actions.MoveToElement(element).Click().Perform();
-            Thread.Sleep(5000);
+            int randomSleepTime = _rnd.Next(1, 3) * 1000; // multiplied by milliseconds
+            Thread.Sleep(randomSleepTime);
         }
 
         public async Task ClickElementAsync(IWebElement element, int timeoutSeconds = 10)
         {
             _ex.ExecuteScript("arguments[0].click();", element);
             _actions.MoveToElement(element).Click();
-            Thread.Sleep(5000);
+            int randomSleepTime = _rnd.Next(1, 3) * 1000; // multiplied by milliseconds
+            Thread.Sleep(randomSleepTime);
         }
 
         public async Task SendKeysAsync(By by, string text)

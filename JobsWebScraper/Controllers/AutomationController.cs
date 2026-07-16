@@ -19,7 +19,7 @@ namespace TaskManager.Controllers
         public async Task<IActionResult> Post()
         {
             //await _automation.RunAutomationMacgregor();
-            //await _automation.RunAutomationISS();
+            //await _automation.RunAutomationISS(); // html changed -  to fix
             await _automation.RunAutomationAlior();
 
             return Ok();
