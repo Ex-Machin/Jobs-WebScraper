@@ -12,5 +12,6 @@
         public string Link { get; set; } = null!;
 
         public DateTime? DatePublished { get; set; }
+        public string WorkingType { get; set; } = null!;
     }
 }

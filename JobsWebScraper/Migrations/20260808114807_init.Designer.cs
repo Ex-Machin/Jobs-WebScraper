@@ -12,8 +12,8 @@ using TaskManager.Data;
 namespace JobsWebScraper.Migrations
 {
     [DbContext(typeof(MyAPIContext))]
-    [Migration("20260714175209_date published field added, region field removed")]
-    partial class datepublishedfieldaddedregionfieldremoved
+    [Migration("20260808114807_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,49 +56,13 @@ namespace JobsWebScraper.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("WorkingType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Job");
-                });
-
-            modelBuilder.Entity("TaskManager.Models.MyTask", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("State")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MyTask");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Head First Design Patterns",
-                            State = 0,
-                            Title = "Read Book"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Cracking the coding Interview",
-                            State = 0,
-                            Title = "Read Book"
-                        });
                 });
 #pragma warning restore 612, 618
         }

@@ -18,9 +18,10 @@ namespace TaskManager.Controllers
         [HttpPost("all")]
         public async Task<IActionResult> Post()
         {
-            //await _automation.RunAutomationMacgregor();
-            //await _automation.RunAutomationISS(); // html changed -  to fix
+            await _automation.RunAutomationMacgregor();
+            await _automation.RunAutomationISS();
             await _automation.RunAutomationAlior();
+            await _automation.RunAutomationTfbank();
 
             return Ok();
         }

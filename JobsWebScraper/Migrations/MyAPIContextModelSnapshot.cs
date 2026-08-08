@@ -53,49 +53,13 @@ namespace JobsWebScraper.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("WorkingType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Job");
-                });
-
-            modelBuilder.Entity("TaskManager.Models.MyTask", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("State")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MyTask");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Head First Design Patterns",
-                            State = 0,
-                            Title = "Read Book"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Cracking the coding Interview",
-                            State = 0,
-                            Title = "Read Book"
-                        });
                 });
 #pragma warning restore 612, 618
         }

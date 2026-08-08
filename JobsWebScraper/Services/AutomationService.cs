@@ -32,7 +32,7 @@ namespace TaskManager.Services
             }
         }
 
-        private void createNewJob(Job newJob, string title, string department, string city, string company, string link, DateTime? datePublished)
+        private void createNewJob(Job newJob, string title, string department, string city, string company, string link, DateTime? datePublished, string workingType)
         {
             newJob.Title = title;
             newJob.Department = department;
@@ -40,11 +40,11 @@ namespace TaskManager.Services
             newJob.Company = company;
             newJob.Link = link;
             newJob.DatePublished = datePublished;
+            newJob.WorkingType = workingType;
         }
 
         private async Task scrapeJobsAlior(string company)
         {
-
             ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tbody//tr"));
 
             List<Job> jobsLink = new List<Job>();
@@ -61,10 +61,11 @@ namespace TaskManager.Services
                     "dd.MM.yyyy",
                     System.Globalization.CultureInfo.InvariantCulture
                 );
+                string workingType = "";
 
                 Job newJob = new Job();
 
-                createNewJob(newJob, title, department, city, company, link, datePublished);
+                createNewJob(newJob, title, department, city, company, link, datePublished, workingType);
 
                 jobsLink.Add(newJob);
             }
@@ -75,7 +76,6 @@ namespace TaskManager.Services
 
         private async Task scrapeJobsISS(string company)
         {
-
             ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tr[@class='skk_row_odd'] | .//tr[@class='skk_row_even']"));
 
             List<Job> jobsLink = new List<Job>();
@@ -88,10 +88,11 @@ namespace TaskManager.Services
                 var city = columns[3].GetAttribute("textContent");
                 string link = ""; // to extract
                 DateTime? datePublished = null;
+                string workingType = "";
 
                 Job newJob = new Job();
 
-                createNewJob(newJob, title, department, city, company, link, datePublished);
+                createNewJob(newJob, title, department, city, company, link, datePublished, workingType);
 
                 jobsLink.Add(newJob);
             }
@@ -115,11 +116,12 @@ namespace TaskManager.Services
                 string[] location = job.FindElement(By.XPath(".//span[@class='jobLocation']")).Text.Split(',');
                 string city = location[0];
                 DateTime? datePublished = null;
+                string workingType = "";
 
 
                 Job newJob = new Job();
 
-                createNewJob(newJob, title, department, city, company, link, datePublished);
+                createNewJob(newJob, title, department, city, company, link, datePublished, workingType);
 
                 jobsLink.Add(newJob);
 
@@ -128,18 +130,56 @@ namespace TaskManager.Services
             await _repository.AddJobs(jobsLink);
         }
 
+        private async Task scrapeJobsTfbank(string company)
+        {
+            ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//ul[@id='jobs_list_container']//li"));
+            
+            List<Job> jobsLink = new List<Job>();
+            
+            foreach (var job in jobsList)
+            {
+                try
+                {
+                    var title = job.FindElement(By.ClassName("text-block-base-link")).Text;
+                    string? link = job.FindElement(By.TagName("a")).GetAttribute("href");
+                    var descriptionBlock = job.FindElement(By.XPath(".//div[contains(@class, 'mt-1 text-md')]"));
 
-        public async Task<int> RunAutomationISS()
+                    string[] description = descriptionBlock.Text.Split('·');
+
+                    string department = description[0].Trim();
+                    string city = description[1].Trim();
+                    string workingType = description.Length >= 3 ? description[2].Trim() : "";
+                    DateTime? datePublished = null;
+
+                    Job newJob = new Job();
+
+                    createNewJob(newJob, title, department, city, company, link, datePublished, workingType);
+
+                    jobsLink.Add(newJob);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+
+
+            await _repository.AddJobs(jobsLink);
+        }
+
+
+        public async Task RunAutomationISS()
         {
             string company = "issworld";
             string fullUrl = "https://www.pl.issworld.com/kariera/oferty-pracy#skk-container";
 
             await scraper.GetHtmlAsync(fullUrl);
 
-            int recordsUpdatedTotal = 0;
+            // remove parent of shadow DOM element to unblock the view
+            await scraper.removeElementFromDOM(By.Id("usercentrics-cmp-ui"));
 
             var lastPagerEl = await scraper.WaitForElementAsync(By.XPath(".//a[@class='skk_pager_last']"));
-            int lastPagerCount = Int32.Parse(lastPagerEl.Text) - 2;
+            int lastPagerCount = Int32.Parse(lastPagerEl.Text) - 1;
 
             // delete eveything to make sure everything is up to date
             await _repository.DeleteJobByCompany(company);
@@ -151,18 +191,14 @@ namespace TaskManager.Services
                 await scraper.ClickElementAsync(By.XPath(".//a[@class='skk_pager_next']"));
                 await scrapeJobsISS(company);
             }
-
-            return recordsUpdatedTotal;
         }
 
-        public async Task<int> RunAutomationMacgregor()
+        public async Task RunAutomationMacgregor()
         {
             string company = "macgregor";
             string fullUrl = "https://careers.macgregor.com/search";
 
             await scraper.GetHtmlAsync(fullUrl);
-
-            int recordsUpdatedTotal = 0;
 
             var pagination = await scraper.WaitForElementsAsync(By.XPath(".//ul[@class='pagination']//li"));
 
@@ -177,18 +213,14 @@ namespace TaskManager.Services
                 await scraper.ClickElementAsync(page);
                 await scrapeJobsMacgregor(company);
             }
-
-            return recordsUpdatedTotal;
         }
 
-        public async Task<int> RunAutomationAlior()
+        public async Task RunAutomationAlior()
         {
             string company = "aliorbank";
             string fullUrl = "https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html";
 
             await scraper.GetHtmlAsync(fullUrl);
-
-            int recordsUpdatedTotal = 0;
 
             var lastPageContainer = await scraper.WaitForElementAsync(By.XPath(".//ul[@class='pagination']//li[@class='item'][last()]//a"));
             string lastPage = lastPageContainer.GetAttribute("innerHTML").Split(" ")[3];
@@ -203,8 +235,33 @@ namespace TaskManager.Services
                 await scraper.ClickElementAsync(await scraper.WaitForElementAsync(By.XPath(".//ul[@class='pagination']//li[@class='item next']//a")));
                 await scrapeJobsAlior(company);
             }
+        }
 
-            return recordsUpdatedTotal;
+        public async Task RunAutomationTfbank()
+        {
+            string company = "tfbank";
+            string fullUrl = "https://tfbank.teamtailor.com/jobs";
+
+            // delete eveything to make sure everything is up to date
+            await _repository.DeleteJobByCompany(company);
+
+            await scraper.GetHtmlAsync(fullUrl);
+
+            // Accept cookies
+            await scraper.ClickElementAsync(By.XPath(".//button[@aria-label='Accept all cookies']"));
+
+            // delete eveything to make sure everything is up to date
+            await _repository.DeleteJobByCompany(company);
+
+            // with span we check if button element is not empty, because
+            // when clicking on all buttons - button element doesn't dissapear from the dom
+            while (await scraper.isPresentInDom(By.XPath(".//div[@id='show_more_button']//span")))
+            {
+                var btn = await scraper.WaitForElementAsync(By.XPath(".//div[@id='show_more_button']"));
+                await scraper.ClickElementAsync(btn.FindElement(By.TagName("a")));
+            }
+
+            await scrapeJobsTfbank(company);
         }
     }
 }

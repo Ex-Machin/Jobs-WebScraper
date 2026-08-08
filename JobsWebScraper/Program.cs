@@ -16,10 +16,13 @@ builder.Services.AddDbContext<MyAPIContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 //builder.Services.AddScoped<IRepository, Repository>();
-builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IJobsRepository, JobsRepository>();
 builder.Services.AddScoped<IAutomationService, AutomationService>();
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        policyBuilder => policyBuilder.WithOrigins("https://ex-machin.github.io/WebScraper-Frontend/"));
+});
 
 var app = builder.Build();
 

@@ -26,7 +26,7 @@ namespace JobsWebScraper.Services
             }
 
             var options = new ChromeOptions();
-            options.AddArgument("--headless");
+            //options.AddArgument("--headless"); // for testing
             _driver = new ChromeDriver(options);
             _actions = new Actions(_driver);
             _ex = (IJavaScriptExecutor)_driver;
@@ -61,8 +61,8 @@ namespace JobsWebScraper.Services
         {
             var element = await WaitForElementAsync(by, timeoutSeconds);
             _ex.ExecuteScript("arguments[0].click();", element);
-            _actions.MoveToElement(element).Click().Perform();
-            int randomSleepTime = _rnd.Next(1, 3) * 1000; // multiplied by milliseconds
+            _actions.MoveToElement(element).Click();
+            int randomSleepTime = _rnd.Next(1, 3) * 1000; // from 1 to 3 seconds
             Thread.Sleep(randomSleepTime);
         }
 
@@ -70,7 +70,7 @@ namespace JobsWebScraper.Services
         {
             _ex.ExecuteScript("arguments[0].click();", element);
             _actions.MoveToElement(element).Click();
-            int randomSleepTime = _rnd.Next(1, 3) * 1000; // multiplied by milliseconds
+            int randomSleepTime = _rnd.Next(1, 3) * 1000; // from 1 to 3 seconds
             Thread.Sleep(randomSleepTime);
         }
 
@@ -80,6 +80,25 @@ namespace JobsWebScraper.Services
             await Task.Run(() => element.SendKeys(text));
         }
 
+        public async Task<bool> isPresentInDom(By by, int timeoutSeconds = 10)
+        {
+            try
+            {
+                var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeoutSeconds));
+                await Task.Run(() => wait.Until(d => d.FindElement(by)));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task removeElementFromDOM(By by, int timeoutSeconds = 10)
+        {
+            var element = await WaitForElementAsync(by, timeoutSeconds);
+            _ex.ExecuteScript("arguments[0].remove();", element);
+        }
 
     }
 }
