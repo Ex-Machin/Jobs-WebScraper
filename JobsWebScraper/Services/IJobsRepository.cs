@@ -1,6 +1,6 @@
-﻿using TaskManager.Models;
+﻿using JobsWebScraper.Models;
 
-namespace TaskManager.Services
+namespace JobsWebScraper.Services
 {
     public interface IJobsRepository
     {

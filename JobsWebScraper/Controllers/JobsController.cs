@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TaskManager.Data;
-using TaskManager.Models;
-using TaskManager.Services;
+using JobsWebScraper.Data;
+using JobsWebScraper.Models;
+using JobsWebScraper.Services;
 
-namespace TaskManager.Controllers
+namespace JobsWebScraper.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

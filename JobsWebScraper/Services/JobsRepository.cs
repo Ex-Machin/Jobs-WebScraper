@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaskManager.Data;
-using TaskManager.Models;
+using JobsWebScraper.Data;
+using JobsWebScraper.Models;
 
-namespace TaskManager.Services
+namespace JobsWebScraper.Services
 {
     public class JobsRepository : IJobsRepository
     {

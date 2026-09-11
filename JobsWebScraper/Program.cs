@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using TaskManager.Data;
-using TaskManager.Services;
+using JobsWebScraper.Data;
+using JobsWebScraper.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

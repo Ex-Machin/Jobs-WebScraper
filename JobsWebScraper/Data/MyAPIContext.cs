@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaskManager.Models;
+using JobsWebScraper.Models;
 
-namespace TaskManager.Data
+namespace JobsWebScraper.Data
 {
     public class MyAPIContext : DbContext
     {

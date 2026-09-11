@@ -6,9 +6,9 @@ using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System.Collections.ObjectModel;
 using System.Web;
-using TaskManager.Models;
+using JobsWebScraper.Models;
 
-namespace TaskManager.Services
+namespace JobsWebScraper.Services
 {
     public class AutomationService : IAutomationService
     {
@@ -43,36 +43,36 @@ namespace TaskManager.Services
             newJob.WorkingType = workingType;
         }
 
-        private async Task scrapeJobsAlior(string company)
-        {
-            ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tbody//tr"));
+        // private async Task scrapeJobsAlior(string company)
+        // {
+        //     ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tbody//tr"));
 
-            List<Job> jobsLink = new List<Job>();
+        //     List<Job> jobsLink = new List<Job>();
 
-            foreach (var job in jobsList)
-            {
-                var titleLink = job.FindElement(By.ClassName("job-link"));
-                var title = titleLink.GetAttribute("innerHTML");
-                string link = titleLink.GetAttribute("href");
-                string department = findElementWithPossibleNull(By.XPath(".//td[@class='job-category']//span"), job);
-                string city = job.FindElement(By.XPath(".//td[@class='job-location']//span")).Text;
-                DateTime datePublished = DateTime.ParseExact(
-                    job.FindElement(By.XPath(".//td[@class='job-date']//span")).Text,
-                    "dd.MM.yyyy",
-                    System.Globalization.CultureInfo.InvariantCulture
-                );
-                string workingType = "";
+        //     foreach (var job in jobsList)
+        //     {
+        //         var titleLink = job.FindElement(By.ClassName("job-link"));
+        //         var title = titleLink.GetAttribute("innerHTML");
+        //         string link = titleLink.GetAttribute("href");
+        //         string department = findElementWithPossibleNull(By.XPath(".//td[@class='job-category']//span"), job);
+        //         string city = job.FindElement(By.XPath(".//td[@class='job-location']//span")).Text;
+        //         DateTime datePublished = DateTime.ParseExact(
+        //             job.FindElement(By.XPath(".//td[@class='job-date']//span")).Text,
+        //             "dd.MM.yyyy",
+        //             System.Globalization.CultureInfo.InvariantCulture
+        //         );
+        //         string workingType = "";
 
-                Job newJob = new Job();
+        //         Job newJob = new Job();
 
-                createNewJob(newJob, title, department, city, company, link, datePublished, workingType);
+        //         createNewJob(newJob, title, department, city, company, link, datePublished, workingType);
 
-                jobsLink.Add(newJob);
-            }
+        //         jobsLink.Add(newJob);
+        //     }
 
-            await _repository.AddJobs(jobsLink);
+        //     await _repository.AddJobs(jobsLink);
 
-        }
+        // }
 
         private async Task scrapeJobsISS(string company)
         {
@@ -99,35 +99,6 @@ namespace TaskManager.Services
 
             await _repository.AddJobs(jobsLink);
 
-        }
-
-        private async Task scrapeJobsMacgregor(string company)
-        {
-            ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tr[@class='data-row']"));
-
-            List<Job> jobsLink = new List<Job>();
-
-            foreach (var job in jobsList)
-            {
-                var titleLink = job.FindElement(By.ClassName("jobTitle-link"));
-                var title = titleLink.GetAttribute("innerHTML");
-                string link = titleLink.GetAttribute("href");
-                string department = job.FindElement(By.ClassName("jobFacility")).Text;
-                string[] location = job.FindElement(By.XPath(".//span[@class='jobLocation']")).Text.Split(',');
-                string city = location[0];
-                DateTime? datePublished = null;
-                string workingType = "";
-
-
-                Job newJob = new Job();
-
-                createNewJob(newJob, title, department, city, company, link, datePublished, workingType);
-
-                jobsLink.Add(newJob);
-
-            }
-
-            await _repository.AddJobs(jobsLink);
         }
 
         private async Task scrapeJobsTfbank(string company)
@@ -193,49 +164,49 @@ namespace TaskManager.Services
             }
         }
 
-        public async Task RunAutomationMacgregor()
-        {
-            string company = "macgregor";
-            string fullUrl = "https://careers.macgregor.com/search";
+        // public async Task RunAutomationMacgregor()
+        // {
+        //     string company = "macgregor";
+        //     string fullUrl = "https://careers.macgregor.com/search";
 
-            await scraper.GetHtmlAsync(fullUrl);
+        //     await scraper.GetHtmlAsync(fullUrl);
 
-            var pagination = await scraper.WaitForElementsAsync(By.XPath(".//ul[@class='pagination']//li"));
+        //     var pagination = await scraper.WaitForElementsAsync(By.XPath(".//ul[@class='pagination']//li"));
 
-            // delete eveything to make sure everything is up to date
-            await _repository.DeleteJobByCompany(company);
+        //     // delete eveything to make sure everything is up to date
+        //     await _repository.DeleteJobByCompany(company);
 
-            await scrapeJobsMacgregor(company);
+        //     await scrapeJobsMacgregor(company);
 
-            for (int i = 2; i < pagination.Count - 1; i++)
-            {
-                var page = await scraper.WaitForElementAsync(By.XPath($".//a[@title='Page {i}']"));
-                await scraper.ClickElementAsync(page);
-                await scrapeJobsMacgregor(company);
-            }
-        }
+        //     for (int i = 2; i < pagination.Count - 1; i++)
+        //     {
+        //         var page = await scraper.WaitForElementAsync(By.XPath($".//a[@title='Page {i}']"));
+        //         await scraper.ClickElementAsync(page);
+        //         await scrapeJobsMacgregor(company);
+        //     }
+        // }
 
-        public async Task RunAutomationAlior()
-        {
-            string company = "aliorbank";
-            string fullUrl = "https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html";
+        // public async Task RunAutomationAlior()
+        // {
+        //     string company = "aliorbank";
+        //     string fullUrl = "https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html";
 
-            await scraper.GetHtmlAsync(fullUrl);
+        //     await scraper.GetHtmlAsync(fullUrl);
 
-            var lastPageContainer = await scraper.WaitForElementAsync(By.XPath(".//ul[@class='pagination']//li[@class='item'][last()]//a"));
-            string lastPage = lastPageContainer.GetAttribute("innerHTML").Split(" ")[3];
+        //     var lastPageContainer = await scraper.WaitForElementAsync(By.XPath(".//ul[@class='pagination']//li[@class='item'][last()]//a"));
+        //     string lastPage = lastPageContainer.GetAttribute("innerHTML").Split(" ")[3];
 
-            // delete eveything to make sure everything is up to date
-            await _repository.DeleteJobByCompany(company);
+        //     // delete eveything to make sure everything is up to date
+        //     await _repository.DeleteJobByCompany(company);
 
-            await scrapeJobsAlior(company);
+        //     await scrapeJobsAlior(company);
 
-            for (int i = 1; i <= Int32.Parse(lastPage) - 1; i++)
-            {
-                await scraper.ClickElementAsync(await scraper.WaitForElementAsync(By.XPath(".//ul[@class='pagination']//li[@class='item next']//a")));
-                await scrapeJobsAlior(company);
-            }
-        }
+        //     for (int i = 1; i <= Int32.Parse(lastPage) - 1; i++)
+        //     {
+        //         await scraper.ClickElementAsync(await scraper.WaitForElementAsync(By.XPath(".//ul[@class='pagination']//li[@class='item next']//a")));
+        //         await scrapeJobsAlior(company);
+        //     }
+        // }
 
         public async Task RunAutomationTfbank()
         {

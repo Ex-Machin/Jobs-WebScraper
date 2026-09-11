@@ -1,4 +1,4 @@
-﻿namespace TaskManager.Models
+﻿namespace JobsWebScraper.Models
 {
     public class Job
     {
