@@ -10,11 +10,14 @@ using JobsWebScraper.Models;
 
 namespace JobsWebScraper.Scrapers
 {
-    class ScraperMacgregor : IScraper
+    class ScraperAlior : IScraper
     {
+        public string Company { get; set;}
+        public ScraperAlior(string company) 
+        {
+            this.Company = company;
+        }
         public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper) {
-            string company = "aliorbank";
-
             await scraper.GetHtmlAsync(url);
 
             List<Job> jobsLink = new List<Job>();
@@ -24,14 +27,12 @@ namespace JobsWebScraper.Scrapers
 
             ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tbody//tr"));
 
-            List<Job> jobsLink = new List<Job>();
-
             foreach (var job in jobsList)
             {
                 var titleLink = job.FindElement(By.ClassName("job-link"));
                 var title = titleLink.GetAttribute("innerHTML");
                 string link = titleLink.GetAttribute("href");
-                string department = findElementWithPossibleNull(By.XPath(".//td[@class='job-category']//span"), job);
+                string department = scraper.findElementWithPossibleNull(By.XPath(".//td[@class='job-category']//span"), job);
                 string city = job.FindElement(By.XPath(".//td[@class='job-location']//span")).Text;
                 DateTime datePublished = DateTime.ParseExact(
                     job.FindElement(By.XPath(".//td[@class='job-date']//span")).Text,
@@ -42,17 +43,48 @@ namespace JobsWebScraper.Scrapers
 
                 Job newJob = new Job();
 
-                createNewJob(newJob, title, department, city, company, link, datePublished, workingType);
+                newJob.Title = title;
+                newJob.Department = department;
+                newJob.City = city;
+                newJob.Company = this.Company;
+                newJob.Link = link;
+                newJob.DatePublished = datePublished;
+                newJob.WorkingType = workingType;
 
                 jobsLink.Add(newJob);
             }
 
-            await _repository.AddJobs(jobsLink);
 
             for (int i = 1; i <= Int32.Parse(lastPage) - 1; i++)
             {
                 await scraper.ClickElementAsync(await scraper.WaitForElementAsync(By.XPath(".//ul[@class='pagination']//li[@class='item next']//a")));
-                await scrapeJobsAlior(company);
+                jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tbody//tr"));
+                foreach (var job in jobsList)
+                {
+                    var titleLink = job.FindElement(By.ClassName("job-link"));
+                    var title = titleLink.GetAttribute("innerHTML");
+                    string link = titleLink.GetAttribute("href");
+                    string department = scraper.findElementWithPossibleNull(By.XPath(".//td[@class='job-category']//span"), job);
+                    string city = job.FindElement(By.XPath(".//td[@class='job-location']//span")).Text;
+                    DateTime datePublished = DateTime.ParseExact(
+                        job.FindElement(By.XPath(".//td[@class='job-date']//span")).Text,
+                        "dd.MM.yyyy",
+                        System.Globalization.CultureInfo.InvariantCulture
+                    );
+                    string workingType = "";
+
+                    Job newJob = new Job();
+
+                    newJob.Title = title;
+                    newJob.Department = department;
+                    newJob.City = city;
+                    newJob.Company = this.Company;
+                    newJob.Link = link;
+                    newJob.DatePublished = datePublished;
+                    newJob.WorkingType = workingType;
+
+                    jobsLink.Add(newJob);
+                }
             }
 
             return jobsLink;

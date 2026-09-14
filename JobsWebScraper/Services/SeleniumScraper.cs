@@ -40,6 +40,18 @@ namespace JobsWebScraper.Services
             _rnd = new Random();
         }
 
+        public string findElementWithPossibleNull(By by, IWebElement el)
+        {
+            try
+            {
+                return el.FindElement(by).Text;
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
         public async Task<string> GetHtmlAsync(string url)
         {
             await Task.Run(() => _driver.Navigate().GoToUrl(url));

@@ -17,7 +17,6 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 );
 //builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<IJobsRepository, JobsRepository>();
-builder.Services.AddScoped<IAutomationService, AutomationService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",

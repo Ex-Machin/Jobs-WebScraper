@@ -12,11 +12,9 @@ namespace JobsWebScraper.Controllers
     public class JobsController : ControllerBase
     {
         private readonly IJobsRepository _repository;
-        private readonly IAutomationService _automation;
-        public JobsController(IJobsRepository repository, IAutomationService automation)
+        public JobsController(IJobsRepository repository)
         {
             _repository = repository;
-            _automation = automation;
         }
         [HttpGet]
         public async Task<ActionResult<List<Job>>> Get()

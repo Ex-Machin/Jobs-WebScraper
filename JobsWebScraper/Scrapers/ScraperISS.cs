@@ -10,30 +10,33 @@ using JobsWebScraper.Models;
 
 namespace JobsWebScraper.Scrapers
 {
-    class ScraperMacgregor : IScraper
+    class ScraperISS : IScraper
     {
-        public string Company {get; set; }
-        public ScraperMacgregor(string company) 
+        public string Company {get; set;}
+        public ScraperISS(string company) 
         {
             this.Company = company;
         }
         public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper) {
             await scraper.GetHtmlAsync(url);
 
-            var pagination = await scraper.WaitForElementsAsync(By.XPath(".//ul[@class='pagination']//li"));
+            // remove parent of shadow DOM element to unblock the view
+            await scraper.removeElementFromDOM(By.Id("usercentrics-cmp-ui"));
+
+            var lastPagerEl = await scraper.WaitForElementAsync(By.XPath(".//a[@class='skk_pager_last']"));
+            int lastPagerCount = Int32.Parse(lastPagerEl.Text) - 1;
+
+            ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tr[@class='skk_row_odd'] | .//tr[@class='skk_row_even']"));
 
             List<Job> jobsLink = new List<Job>();
 
-            ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tr[@class='data-row']"));
-            
             foreach (var job in jobsList)
             {
-                var titleLink = job.FindElement(By.ClassName("jobTitle-link"));
-                var title = titleLink.GetAttribute("innerHTML");
-                string link = titleLink.GetAttribute("href");
-                string department = job.FindElement(By.ClassName("jobFacility")).Text;
-                string[] location = job.FindElement(By.XPath(".//span[@class='jobLocation']")).Text.Split(',');
-                string city = location[0];
+                var columns = job.FindElements(By.TagName("td"));
+                string title = columns[0].GetAttribute("textContent");
+                var department = columns[1].GetAttribute("textContent");
+                var city = columns[3].GetAttribute("textContent");
+                string link = ""; // to extract
                 DateTime? datePublished = null;
                 string workingType = "";
 
@@ -48,23 +51,20 @@ namespace JobsWebScraper.Scrapers
                 newJob.WorkingType = workingType;
 
                 jobsLink.Add(newJob);
-
             }
 
-            for (int i = 2; i < pagination.Count - 1; i++)
+            foreach (int _ in Enumerable.Range(1, lastPagerCount))
             {
-                var page = await scraper.WaitForElementAsync(By.XPath($".//a[@title='Page {i}']"));
-                await scraper.ClickElementAsync(page);
-                jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tr[@class='data-row']"));
-                
+                await scraper.ClickElementAsync(By.XPath(".//a[@class='skk_pager_next']"));
+                jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tr[@class='skk_row_odd'] | .//tr[@class='skk_row_even']"));
+
                 foreach (var job in jobsList)
                 {
-                    var titleLink = job.FindElement(By.ClassName("jobTitle-link"));
-                    var title = titleLink.GetAttribute("innerHTML");
-                    string link = titleLink.GetAttribute("href");
-                    string department = job.FindElement(By.ClassName("jobFacility")).Text;
-                    string[] location = job.FindElement(By.XPath(".//span[@class='jobLocation']")).Text.Split(',');
-                    string city = location[0];
+                    var columns = job.FindElements(By.TagName("td"));
+                    string title = columns[0].GetAttribute("textContent");
+                    var department = columns[1].GetAttribute("textContent");
+                    var city = columns[3].GetAttribute("textContent");
+                    string link = ""; // to extract
                     DateTime? datePublished = null;
                     string workingType = "";
 
@@ -77,7 +77,6 @@ namespace JobsWebScraper.Scrapers
                     newJob.Link = link;
                     newJob.DatePublished = datePublished;
                     newJob.WorkingType = workingType;
-
                     jobsLink.Add(newJob);
                 }
             }
