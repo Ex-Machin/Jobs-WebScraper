@@ -35,7 +35,6 @@ namespace JobsWebScraper.Controllers
                 "https://tfbank.teamtailor.com/jobs"
             };
 
-            // foreach(KeyValuePair<string, string> website  in websitesForScraping) {
             foreach(string website in websitesForScraping) {
                 var scraper = scrapers[website];
 
