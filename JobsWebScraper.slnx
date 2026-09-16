@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="JobsWebScraper/JobsWebScraper.csproj" />
+  <Project Path="JobsWebScraper.Data/JobsWebScraper.Data.csproj" />
+  <Project Path="JobsWebScraper.Web/JobsWebScraper.Web.csproj" />
 </Solution>
