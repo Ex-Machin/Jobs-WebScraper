@@ -1,0 +1,130 @@
+@page "/"
+@inject IDbContextFactory<MyAPIContext> DbFactory
+@inject JobsApiClient JobsApi
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Jobs</PageTitle>
+
+<Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight" />
+
+<div class="mb-3">
+    <Button Color="ButtonColor.Primary" Disabled="isScraping" @onclick="RunScrapers">
+        @if (isScraping)
+        {
+            <Spinner Type="SpinnerType.Border" Size="SpinnerSize.Small" Class="me-2" />
+            <span>Scraping&hellip;</span>
+        }
+        else
+        {
+            <span>Run scrapers</span>
+        }
+    </Button>
+</div>
+
+<Grid @ref="grid" TItem="Job" AllowFiltering="true" AllowPaging="true" AllowSorting="true" AllowSelection="true"
+      Class="table table-hover table-bordered table-striped" DataProvider="JobsDataProvider" PageSize="20"
+      Responsive="true" RowKeySelector="(emp) => emp.Id"
+      SelectionMode="GridSelectionMode.Multiple" AllowRowClick="true"
+      OnRowClick="OnRowClick">
+
+    <GridColumns>
+        <GridColumn TItem="Job" HeaderText="Id" PropertyName="Id" SortKeySelector="item => item.Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="Job" HeaderText="Company" PropertyName="Company" FilterTextboxWidth="50"
+                    FilterTextboxWidthUnit="Unit.Percentage" SortKeySelector="item => item.Company">
+            @context.Company
+        </GridColumn>
+        <GridColumn TItem="Job" HeaderText="Date Published" PropertyName="DatePublished"
+                    SortKeySelector="item => item.DatePublished">
+            @context.DatePublished
+        </GridColumn>
+        <GridColumn TItem="Job" HeaderText="Title" PropertyName="Title" SortKeySelector="item => item.Title">
+            @context.Title
+        </GridColumn>
+        <GridColumn TItem="Job" HeaderText="Department" PropertyName="Department"
+                    SortKeySelector="item => item.Department">
+            @context.Department
+        </GridColumn>
+        <GridColumn TItem="Job" HeaderText="City" PropertyName="City" SortKeySelector="item => item.City">
+            @context.City
+        </GridColumn>
+
+    </GridColumns>
+
+</Grid>
+
+@code {
+    private Grid<Job> grid = default!;
+    private IEnumerable<Job>? jobs;
+    private bool isScraping;
+
+    private List<ToastMessage> messages = new List<ToastMessage>();
+
+    private async Task<GridDataProviderResult<Job>> JobsDataProvider(GridDataProviderRequest<Job> request)
+    {
+        if (jobs is null)
+        {
+            try
+            {
+                await using var db = await DbFactory.CreateDbContextAsync();
+                jobs = await db.Job.AsNoTracking().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                ShowMessage(ToastType.Danger, "Could not load jobs", ex.Message);
+
+                // Leave 'jobs' null so the next render retries rather than caching the failure.
+                return request.ApplyTo(Enumerable.Empty<Job>());
+            }
+        }
+
+        return request.ApplyTo(jobs);
+    }
+
+    private async Task OnRowClick(GridRowEventArgs<Job> args)
+    {
+        var url = args.Item.Link;
+
+        if (!string.IsNullOrWhiteSpace(url))
+        {
+            await JSRuntime.InvokeVoidAsync("open", url, "_blank");
+        }
+        else
+        {
+            ShowMessage(ToastType.Warning, "No link", $"\"{args.Item.Title}\" has no link to open.");
+        }
+    }
+
+    private async Task RunScrapers()
+    {
+        isScraping = true;
+
+        try
+        {
+            await JobsApi.TriggerScrapeAsync();
+
+            jobs = null;
+            await grid.RefreshDataAsync();
+
+            ShowMessage(ToastType.Success, "Scrape finished", "The jobs list has been refreshed.");
+        }
+        catch (Exception ex)
+        {
+            ShowMessage(ToastType.Danger, "Scrape failed", ex.Message);
+        }
+        finally
+        {
+            isScraping = false;
+        }
+    }
+
+    private void ShowMessage(ToastType toastType, string title, string message)
+        => messages.Add(new ToastMessage
+            {
+                Type = toastType,
+                Title = title,
+                HelpText = $"{DateTime.Now:HH:mm:ss}",
+                Message = message,
+            });
+}
