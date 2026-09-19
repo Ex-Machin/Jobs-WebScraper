@@ -13,9 +13,11 @@ namespace JobsWebScraper.Services
             _context = context; 
         }
 
-        public async Task<List<Job>> GetAllJobs()
+        public async Task<List<Job>> GetAllJobs(int page = 1, int pageSize = 20)
         {
-            return await _context.Job.ToListAsync();
+            int skipNumber = (page - 1) * pageSize;
+
+            return await _context.Job.Skip(skipNumber).Take(pageSize).ToListAsync();
         }
 
         public async Task<Job> GetJobById(int id)

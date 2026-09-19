@@ -4,7 +4,7 @@ namespace JobsWebScraper.Services
 {
     public interface IJobsRepository
     {
-        Task<List<Job>> GetAllJobs();
+        Task<List<Job>> GetAllJobs(int page, int pageSize);
         Task<Job> GetJobById(int id);
         Task AddJob(Job newJob);
         Task AddJobs(List<Job> jobs);

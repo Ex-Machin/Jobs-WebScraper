@@ -17,9 +17,9 @@ namespace JobsWebScraper.Controllers
             _repository = repository;
         }
         [HttpGet]
-        public async Task<ActionResult<List<Job>>> Get()
+        public async Task<ActionResult<List<Job>>> Get(int page = 1, int pageSize = 20)
         {
-            return Ok(await _repository.GetAllJobs());
+            return Ok(await _repository.GetAllJobs(page, pageSize));
         }
 
         [HttpGet("{id}")]
