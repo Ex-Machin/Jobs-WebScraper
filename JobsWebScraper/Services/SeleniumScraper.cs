@@ -1,5 +1,5 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System.Collections.ObjectModel;
@@ -25,16 +25,16 @@ namespace JobsWebScraper.Services
                 Console.WriteLine($"no previous sessions: {ex.ToString()}");
             }
 
-            var options = new FirefoxOptions();
-            options.BinaryLocation = "/home/ian/Projects/firefox/obj-x86_64-pc-linux-gnu/dist/bin/firefox";
+            var options = new ChromeOptions();
+
             //options.AddArgument("--headless"); // for testing
             // Explicit local driver service so Selenium never invokes its
             // bundled selenium-manager (which phones home to GitHub to
             // resolve/download a matching geckodriver) - avoids a multi-minute
             // hang against the domain-allowlist firewall for no benefit, since
             // a matching geckodriver is already installed locally.
-            var service = FirefoxDriverService.CreateDefaultService("/home/ian/.local/bin");
-            _driver = new FirefoxDriver(service, options);
+            // var service = ChromeDriverService.CreateDefaultService("/home/ian/.local/bin");
+            _driver = new ChromeDriver(options);
             _actions = new Actions(_driver);
             _ex = (IJavaScriptExecutor)_driver;
             _rnd = new Random();

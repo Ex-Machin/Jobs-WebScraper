@@ -16,7 +16,6 @@
     <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Selenium.WebDriver" Version="4.45.0" />
-    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.37.1" />
   </ItemGroup>
 
   <ItemGroup>
