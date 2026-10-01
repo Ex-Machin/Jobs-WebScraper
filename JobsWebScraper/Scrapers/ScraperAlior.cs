@@ -31,7 +31,7 @@ namespace JobsWebScraper.Scrapers
             {
                 var titleLink = job.FindElement(By.ClassName("job-link"));
                 var title = titleLink.GetAttribute("innerHTML");
-                string link = titleLink.GetAttribute("href");
+                string link = titleLink.GetAttribute("href") ?? "";
                 string department = scraper.findElementWithPossibleNull(By.XPath(".//td[@class='job-category']//span"), job);
                 string city = job.FindElement(By.XPath(".//td[@class='job-location']//span")).Text;
                 DateTime datePublished = DateTime.ParseExact(
