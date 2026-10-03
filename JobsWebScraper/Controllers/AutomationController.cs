@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Http.Timeouts;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using JobsWebScraper.Services;
 using JobsWebScraper.Scrapers;
 using JobsWebScraper.Models;
+using JobsWebScraper.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobsWebScraper.Controllers
 {
@@ -10,10 +11,10 @@ namespace JobsWebScraper.Controllers
     [Route("api/[controller]")]
     public class AutomationController : ControllerBase
     {
-        private readonly IJobsRepository _repository;
-        public AutomationController(IJobsRepository repository)
+        private readonly MyAPIContext _context;
+        public AutomationController(MyAPIContext context)
         {
-            _repository = repository;
+            _context = context;
         }
         [HttpPost("all")]
         public async Task<IActionResult> Post()
@@ -21,18 +22,21 @@ namespace JobsWebScraper.Controllers
             SeleniumScraper scraperInstance = new SeleniumScraper();
 
             var scrapers = new Dictionary<string, IScraper>();
-            scrapers.Add("https://careers.macgregor.com/search", new ScraperMacgregor("macgregor"));
-            scrapers.Add("https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html", new ScraperAlior("aliorbank"));
-            scrapers.Add("https://www.pl.issworld.com/kariera/oferty-pracy#skk-container", new ScraperISS("issworld"));
-            scrapers.Add("https://tfbank.teamtailor.com/jobs", new ScraperTfbank("tfbank"));
+            // scrapers.Add("https://careers.macgregor.com/search", new ScraperMacgregor("macgregor"));
+            // scrapers.Add("https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html", new ScraperAlior("aliorbank"));
+            // scrapers.Add("https://www.pl.issworld.com/kariera/oferty-pracy#skk-container", new ScraperISS("issworld"));
+            // scrapers.Add("https://tfbank.teamtailor.com/jobs", new ScraperTfbank("tfbank"));
+            scrapers.Add("https://klinikabocian.pl/klinika/kariera", new KlinikaBocian("klinikabocian"));
+
 
             // var websitesForScraping = db.LoadWebsites();
 
             List<string> websitesForScraping = new List<string>  {
-                "https://careers.macgregor.com/search",
-                "https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html",
-                "https://www.pl.issworld.com/kariera/oferty-pracy#skk-container",
-                "https://tfbank.teamtailor.com/jobs"
+                // "https://careers.macgregor.com/search",
+                // "https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html",
+                // "https://www.pl.issworld.com/kariera/oferty-pracy#skk-container",
+                // "https://tfbank.teamtailor.com/jobs"
+                "https://klinikabocian.pl/klinika/kariera"
             };
 
             foreach(string website in websitesForScraping) {
@@ -41,8 +45,9 @@ namespace JobsWebScraper.Controllers
                 List<Job> jobs = await scraper.Scrape(website, scraperInstance);
 
                 // delete eveything to make sure everything is up to date
-                await _repository.DeleteJobByCompany(scraper.Company);
-                await _repository.AddJobs(jobs);
+                await _context.Job.Where(j => j.Company == scraper.Company).ExecuteDeleteAsync();
+                _context.Job.AddRange(jobs);
+                await _context.SaveChangesAsync();                
             }
 
             return Ok();

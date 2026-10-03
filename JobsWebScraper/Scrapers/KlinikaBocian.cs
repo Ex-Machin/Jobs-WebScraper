@@ -25,7 +25,7 @@ namespace JobsWebScraper.Scrapers
 
             ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.ClassName("offer"));
 
-            foreach (var job in jobsList)
+            foreach (IWebElement job in jobsList)
             {
                 string title = job.FindElement(By.XPath(".//div[@class='erecruiter']/h3")).GetAttribute("innerHTML");
                 string link = job.FindElement(By.XPath("//a[@target='play-frame']")).GetAttribute("href") ?? "";

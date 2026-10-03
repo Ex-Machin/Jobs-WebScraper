@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using JobsWebScraper.Data;
-using JobsWebScraper.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +13,6 @@ builder.Services.AddDbContext<MyAPIContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 //builder.Services.AddScoped<IRepository, Repository>();
-builder.Services.AddScoped<IJobsRepository, JobsRepository>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",

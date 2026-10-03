@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using JobsWebScraper.Data;
 using JobsWebScraper.Models;
@@ -11,21 +10,23 @@ namespace JobsWebScraper.Controllers
     [Route("api/[controller]")]
     public class JobsController : ControllerBase
     {
-        private readonly IJobsRepository _repository;
-        public JobsController(IJobsRepository repository)
+        private readonly MyAPIContext _context;
+        public JobsController(MyAPIContext context)
         {
-            _repository = repository;
+            _context = context;
         }
         [HttpGet]
         public async Task<ActionResult<List<Job>>> Get(int page = 1, int pageSize = 20)
         {
-            return Ok(await _repository.GetAllJobs(page, pageSize));
+            int skipNumber = (page - 1) * pageSize;
+
+            return await _context.Job.Skip(skipNumber).Take(pageSize).ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Job>> GetById(int id)
         {
-            var job = await _repository.GetJobById(id);
+            var job = await _context.Job.FindAsync(id);
 
             if (job == null)
             {
@@ -36,30 +37,39 @@ namespace JobsWebScraper.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Job>> Post(Job job)
+        public async Task<ActionResult<List<Job>>> Post(List<Job> jobs)
         {
-            if (job == null)
+            if (jobs == null)
             {
                 return BadRequest();
             }
 
-            await _repository.AddJob(job);
+            _context.Job.AddRange(jobs);
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Post), new { id = job.Id });
+            List<Job> createdJobs = [.. jobs];
+
+            return CreatedAtAction(nameof(Post), createdJobs);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, Job newJob)
         {
-            var job = await _repository.GetJobById(id);
+            var job = await _context.Job.FindAsync(id);
 
             if (job == null)
             {
                 return NotFound();
             }
 
-            await _repository.PutJob(job, newJob);
+            job.Company = newJob.Company;
+            job.City = newJob.City;
+            job.Department = newJob.Department;
+            job.Title = newJob.Title;
+            job.Link = newJob.Link;
+            job.DatePublished = newJob.DatePublished;
 
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -67,14 +77,15 @@ namespace JobsWebScraper.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var job = await _repository.GetJobById(id);
+            var job = await _context.Job.FindAsync(id);
 
             if (job == null)
             {
                 return NotFound();
             }
 
-            await _repository.DeleteJob(job);
+            _context.Remove(job);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -82,7 +93,7 @@ namespace JobsWebScraper.Controllers
         [HttpDelete("bulk/{companyName}")]
         public async Task<IActionResult> Delete(string companyName)
         {
-            await _repository.DeleteJobByCompany(companyName);
+            await _context.Job.Where(j => j.Company == companyName).ExecuteDeleteAsync();
 
             return NoContent();
         }
