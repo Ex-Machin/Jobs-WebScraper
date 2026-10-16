@@ -26,7 +26,7 @@ namespace JobsWebScraper.Scrapers
             {
                 var titleLink = job.FindElement(By.ClassName("jobTitle-link"));
                 var title = titleLink.GetAttribute("innerHTML");
-                string link = titleLink.GetAttribute("href");
+                string link = titleLink.GetAttribute("href") ?? "";
                 string department = job.FindElement(By.ClassName("jobFacility")).Text;
                 string[] location = job.FindElement(By.XPath(".//span[@class='jobLocation']")).Text.Split(',');
                 string city = location[0];

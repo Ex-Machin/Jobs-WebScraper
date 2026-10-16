@@ -35,7 +35,7 @@ namespace JobsWebScraper.Scrapers
                 try
                 {
                     var title = job.FindElement(By.ClassName("text-block-base-link")).Text;
-                    string? link = job.FindElement(By.TagName("a")).GetAttribute("href");
+                    string link = job.FindElement(By.TagName("a")).GetAttribute("href") ?? "";
                     var descriptionBlock = job.FindElement(By.XPath(".//div[contains(@class, 'mt-1 text-md')]"));
 
                     string[] description = descriptionBlock.Text.Split('·');
