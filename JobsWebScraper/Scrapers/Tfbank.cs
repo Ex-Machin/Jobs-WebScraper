@@ -5,13 +5,8 @@ using JobsWebScraper.Models;
 
 namespace JobsWebScraper.Scrapers
 {
-    class ScraperTfbank : IScraper
+    class Tfbank : IScraper
     {
-        public string Company {get; set; }
-        public ScraperTfbank(string company) 
-        {
-            this.Company = company;
-        }
         public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper) {
             await scraper.GetHtmlAsync(url);
 
@@ -34,9 +29,9 @@ namespace JobsWebScraper.Scrapers
             {
                 try
                 {
-                    var title = job.FindElement(By.ClassName("text-block-base-link")).Text;
+                    var title = job.FindElement(By.TagName("span")).Text;
                     string link = job.FindElement(By.TagName("a")).GetAttribute("href") ?? "";
-                    var descriptionBlock = job.FindElement(By.XPath(".//div[contains(@class, 'mt-1 text-md')]"));
+                    var descriptionBlock = job.FindElement(By.XPath(".//div[contains(@class, 'text-md mt-4')]"));
 
                     string[] description = descriptionBlock.Text.Split('·');
 
@@ -45,15 +40,16 @@ namespace JobsWebScraper.Scrapers
                     string workingType = description.Length >= 3 ? description[2].Trim() : "";
                     DateTime? datePublished = null;
 
-                    Job newJob = new Job();
-
-                    newJob.Title = title;
-                    newJob.Department = department;
-                    newJob.City = city;
-                    newJob.Company = this.Company;
-                    newJob.Link = link;
-                    newJob.DatePublished = datePublished;
-                    newJob.WorkingType = workingType;
+                    Job newJob = new Job
+                    {
+                        Title = title,
+                        Department = department,
+                        City = city,
+                        Company = this.GetType().Name,
+                        Link = link,
+                        DatePublished = datePublished,
+                        WorkingType = workingType
+                    };
 
                     jobsLink.Add(newJob);
                 }

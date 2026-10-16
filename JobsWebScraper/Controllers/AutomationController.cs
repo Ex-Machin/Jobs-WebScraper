@@ -22,13 +22,13 @@ namespace JobsWebScraper.Controllers
             SeleniumScraper scraperInstance = new SeleniumScraper();
 
             var scrapers = new Dictionary<string, IScraper>();
-            // scrapers.Add("https://careers.macgregor.com/search", new ScraperMacgregor("macgregor"));
-            // scrapers.Add("https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html", new ScraperAlior("aliorbank"));
-            // scrapers.Add("https://www.pl.issworld.com/kariera/oferty-pracy#skk-container", new ScraperISS("issworld"));
-            // scrapers.Add("https://tfbank.teamtailor.com/jobs", new ScraperTfbank("tfbank"));
-            // scrapers.Add("https://klinikabocian.pl/klinika/kariera", new KlinikaBocian("klinikabocian"));
-            scrapers.Add("https://recrewhr.pl/oferty-pracy/", new ReCrewHR("recrewhr"));
-
+            // scrapers.Add("https://careers.macgregor.com/search", new Macgregor());
+            // scrapers.Add("https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html", new Alior());
+            // scrapers.Add("https://www.pl.issworld.com/kariera/oferty-pracy#skk-container", new ISS());
+            // scrapers.Add("https://tfbank.teamtailor.com/jobs", new Tfbank());
+            // scrapers.Add("https://klinikabocian.pl/klinika/kariera", new KlinikaBocian());
+            // scrapers.Add("https://recrewhr.pl/oferty-pracy/", new ReCrewHR());
+            // scrapers.Add("https://careers.marsh.com/eu/en/poland-warsaw-opportunities/", new Marsh());
 
             // var websitesForScraping = db.LoadWebsites();
 
@@ -48,7 +48,7 @@ namespace JobsWebScraper.Controllers
                 List<Job> jobs = await scraper.Scrape(website, scraperInstance);
 
                 // delete eveything to make sure everything is up to date
-                await _context.Job.Where(j => j.Company == scraper.Company).ExecuteDeleteAsync();
+                await _context.Job.Where(j => j.Company == scraper.GetType().Name).ExecuteDeleteAsync();
                 _context.Job.AddRange(jobs);
                 await _context.SaveChangesAsync();
             }

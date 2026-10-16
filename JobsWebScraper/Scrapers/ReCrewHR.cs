@@ -7,12 +7,6 @@ namespace JobsWebScraper.Scrapers
 {
     class ReCrewHR : IScraper
     {
-        public string Company {get; set; }
-        public ReCrewHR(string company) 
-        {
-            this.Company = company;
-        }
-
         // not enough offers to check pagination logic
         public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper) {
             await scraper.GetHtmlAsync(url);
@@ -33,15 +27,16 @@ namespace JobsWebScraper.Scrapers
                     string workingType = "";
                     DateTime? datePublished = null; // to extract
 
-                    Job newJob = new Job();
-
-                    newJob.Title = title;
-                    newJob.Department = department;
-                    newJob.City = city;
-                    newJob.Company = this.Company;
-                    newJob.Link = link;
-                    newJob.DatePublished = datePublished;
-                    newJob.WorkingType = workingType;
+                    Job newJob = new Job
+                    {
+                        Title = title,
+                        Department = department,
+                        City = city,
+                        Company = this.GetType().Name,
+                        Link = link,
+                        DatePublished = datePublished,
+                        WorkingType = workingType
+                    };
 
                     jobsLink.Add(newJob);
                 }

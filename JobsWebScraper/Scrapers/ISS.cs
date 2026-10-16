@@ -5,13 +5,8 @@ using JobsWebScraper.Models;
 
 namespace JobsWebScraper.Scrapers
 {
-    class ScraperISS : IScraper
+    class ISS : IScraper
     {
-        public string Company { get; set; }
-        public ScraperISS(string company)
-        {
-            this.Company = company;
-        }
         public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper)
         {
             await scraper.GetHtmlAsync(url);
@@ -36,15 +31,16 @@ namespace JobsWebScraper.Scrapers
                 DateTime? datePublished = null;
                 string workingType = "";
 
-                Job newJob = new Job();
-
-                newJob.Title = title;
-                newJob.Department = department;
-                newJob.City = city;
-                newJob.Company = this.Company;
-                newJob.Link = link;
-                newJob.DatePublished = datePublished;
-                newJob.WorkingType = workingType;
+                Job newJob = new Job
+                {
+                    Title = title,
+                    Department = department,
+                    City = city,
+                    Company = this.GetType().Name,
+                    Link = link,
+                    DatePublished = datePublished,
+                    WorkingType = workingType
+                };
 
                 jobsLink.Add(newJob);
             }
@@ -64,15 +60,16 @@ namespace JobsWebScraper.Scrapers
                     DateTime? datePublished = null;
                     string workingType = "";
 
-                    Job newJob = new Job();
-
-                    newJob.Title = title;
-                    newJob.Department = department;
-                    newJob.City = city;
-                    newJob.Company = this.Company;
-                    newJob.Link = link;
-                    newJob.DatePublished = datePublished;
-                    newJob.WorkingType = workingType;
+                    Job newJob = new Job
+                    {
+                        Title = title,
+                        Department = department,
+                        City = city,
+                        Company = this.GetType().Name,
+                        Link = link,
+                        DatePublished = datePublished,
+                        WorkingType = workingType
+                    };
                     jobsLink.Add(newJob);
                 }
             }

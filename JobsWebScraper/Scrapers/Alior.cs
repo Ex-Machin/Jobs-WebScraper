@@ -5,13 +5,8 @@ using JobsWebScraper.Models;
 
 namespace JobsWebScraper.Scrapers
 {
-    class ScraperAlior : IScraper
+    class Alior : IScraper
     {
-        public string Company { get; set; }
-        public ScraperAlior(string company)
-        {
-            this.Company = company;
-        }
         public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper)
         {
             await scraper.GetHtmlAsync(url);
@@ -37,15 +32,16 @@ namespace JobsWebScraper.Scrapers
                 );
                 string workingType = "";
 
-                Job newJob = new Job();
-
-                newJob.Title = title;
-                newJob.Department = department;
-                newJob.City = city;
-                newJob.Company = this.Company;
-                newJob.Link = link;
-                newJob.DatePublished = datePublished;
-                newJob.WorkingType = workingType;
+                Job newJob = new Job
+                {
+                    Title = title,
+                    Department = department,
+                    City = city,
+                    Company = this.GetType().Name,
+                    Link = link,
+                    DatePublished = datePublished,
+                    WorkingType = workingType
+                };
 
                 jobsLink.Add(newJob);
             }
@@ -59,7 +55,7 @@ namespace JobsWebScraper.Scrapers
                 {
                     var titleLink = job.FindElement(By.ClassName("job-link"));
                     var title = titleLink.GetAttribute("innerHTML");
-                    string link = titleLink.GetAttribute("href");
+                    string link = titleLink.GetAttribute("href") ?? "";
                     string department = scraper.findElementWithPossibleNull(By.XPath(".//td[@class='job-category']//span"), job);
                     string city = job.FindElement(By.XPath(".//td[@class='job-location']//span")).Text;
                     DateTime datePublished = DateTime.ParseExact(
@@ -69,15 +65,16 @@ namespace JobsWebScraper.Scrapers
                     );
                     string workingType = "";
 
-                    Job newJob = new Job();
-
-                    newJob.Title = title;
-                    newJob.Department = department;
-                    newJob.City = city;
-                    newJob.Company = this.Company;
-                    newJob.Link = link;
-                    newJob.DatePublished = datePublished;
-                    newJob.WorkingType = workingType;
+                    Job newJob = new Job
+                    {
+                        Title = title,
+                        Department = department,
+                        City = city,
+                        Company = this.GetType().Name,
+                        Link = link,
+                        DatePublished = datePublished,
+                        WorkingType = workingType
+                    };
 
                     jobsLink.Add(newJob);
                 }
