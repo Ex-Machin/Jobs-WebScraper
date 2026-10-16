@@ -15,9 +15,14 @@ namespace JobsWebScraper.Controllers
             _context = context;
         }
         [HttpGet]
-        public async Task<ActionResult<List<Job>>> Get(int page = 1, int pageSize = 20)
+        public async Task<ActionResult<List<Job>>> Get(int page = 1, int pageSize = 20, string company = "")
         {
             int skipNumber = (page - 1) * pageSize;
+
+            if (!string.IsNullOrEmpty(company))
+            {
+                return await _context.Job.Where(job => job.Company == company).ToListAsync();
+            }
 
             return await _context.Job.Skip(skipNumber).Take(pageSize).ToListAsync();
         }
