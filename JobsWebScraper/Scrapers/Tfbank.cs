@@ -1,11 +1,6 @@
-using HtmlAgilityPack;
 using JobsWebScraper.Services;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Support.UI;
 using System.Collections.ObjectModel;
-using System.Web;
 using JobsWebScraper.Models;
 
 namespace JobsWebScraper.Scrapers

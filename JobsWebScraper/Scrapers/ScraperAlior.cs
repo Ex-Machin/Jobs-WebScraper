@@ -1,23 +1,19 @@
-using HtmlAgilityPack;
 using JobsWebScraper.Services;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Support.UI;
 using System.Collections.ObjectModel;
-using System.Web;
 using JobsWebScraper.Models;
 
 namespace JobsWebScraper.Scrapers
 {
     class ScraperAlior : IScraper
     {
-        public string Company { get; set;}
-        public ScraperAlior(string company) 
+        public string Company { get; set; }
+        public ScraperAlior(string company)
         {
             this.Company = company;
         }
-        public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper) {
+        public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper)
+        {
             await scraper.GetHtmlAsync(url);
 
             List<Job> jobsLink = new List<Job>();

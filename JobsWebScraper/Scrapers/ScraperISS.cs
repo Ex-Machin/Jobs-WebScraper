@@ -1,23 +1,19 @@
-using HtmlAgilityPack;
 using JobsWebScraper.Services;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Support.UI;
 using System.Collections.ObjectModel;
-using System.Web;
 using JobsWebScraper.Models;
 
 namespace JobsWebScraper.Scrapers
 {
     class ScraperISS : IScraper
     {
-        public string Company {get; set;}
-        public ScraperISS(string company) 
+        public string Company { get; set; }
+        public ScraperISS(string company)
         {
             this.Company = company;
         }
-        public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper) {
+        public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper)
+        {
             await scraper.GetHtmlAsync(url);
 
             // remove parent of shadow DOM element to unblock the view

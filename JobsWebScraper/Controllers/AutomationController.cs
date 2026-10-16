@@ -26,7 +26,8 @@ namespace JobsWebScraper.Controllers
             // scrapers.Add("https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html", new ScraperAlior("aliorbank"));
             // scrapers.Add("https://www.pl.issworld.com/kariera/oferty-pracy#skk-container", new ScraperISS("issworld"));
             // scrapers.Add("https://tfbank.teamtailor.com/jobs", new ScraperTfbank("tfbank"));
-            scrapers.Add("https://klinikabocian.pl/klinika/kariera", new KlinikaBocian("klinikabocian"));
+            // scrapers.Add("https://klinikabocian.pl/klinika/kariera", new KlinikaBocian("klinikabocian"));
+            scrapers.Add("https://recrewhr.pl/oferty-pracy/", new ReCrewHR("recrewhr"));
 
 
             // var websitesForScraping = db.LoadWebsites();
@@ -35,11 +36,13 @@ namespace JobsWebScraper.Controllers
                 // "https://careers.macgregor.com/search",
                 // "https://www.aliorbank.pl/dodatkowe-informacje/kariera/aktualne-oferty-pracy.html",
                 // "https://www.pl.issworld.com/kariera/oferty-pracy#skk-container",
-                // "https://tfbank.teamtailor.com/jobs"
-                "https://klinikabocian.pl/klinika/kariera"
+                // "https://tfbank.teamtailor.com/jobs",
+                // "https://klinikabocian.pl/klinika/kariera",
+                "https://recrewhr.pl/oferty-pracy/"
             };
 
-            foreach(string website in websitesForScraping) {
+            foreach (string website in websitesForScraping)
+            {
                 var scraper = scrapers[website];
 
                 List<Job> jobs = await scraper.Scrape(website, scraperInstance);
@@ -47,11 +50,10 @@ namespace JobsWebScraper.Controllers
                 // delete eveything to make sure everything is up to date
                 await _context.Job.Where(j => j.Company == scraper.Company).ExecuteDeleteAsync();
                 _context.Job.AddRange(jobs);
-                await _context.SaveChangesAsync();                
+                await _context.SaveChangesAsync();
             }
 
             return Ok();
         }
     }
 }
- 

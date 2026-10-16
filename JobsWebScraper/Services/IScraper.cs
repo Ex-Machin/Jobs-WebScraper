@@ -1,10 +1,10 @@
 using JobsWebScraper.Models;
 
-namespace JobsWebScraper.Services 
+namespace JobsWebScraper.Services
 {
     interface IScraper
     {
-        string Company {get; set; }
+        string Company { get; set; }
         Task<List<Job>> Scrape(string url, SeleniumScraper scraper);
     }
 }

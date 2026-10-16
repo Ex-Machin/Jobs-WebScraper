@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using JobsWebScraper.Data;
 using JobsWebScraper.Models;
-using JobsWebScraper.Services;
 
 namespace JobsWebScraper.Controllers
 {

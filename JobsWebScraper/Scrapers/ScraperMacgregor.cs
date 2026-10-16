@@ -1,23 +1,19 @@
-using HtmlAgilityPack;
 using JobsWebScraper.Services;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Support.UI;
 using System.Collections.ObjectModel;
-using System.Web;
 using JobsWebScraper.Models;
 
 namespace JobsWebScraper.Scrapers
 {
     class ScraperMacgregor : IScraper
     {
-        public string Company {get; set; }
-        public ScraperMacgregor(string company) 
+        public string Company { get; set; }
+        public ScraperMacgregor(string company)
         {
             this.Company = company;
         }
-        public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper) {
+        public async Task<List<Job>> Scrape(string url, SeleniumScraper scraper)
+        {
             await scraper.GetHtmlAsync(url);
 
             var pagination = await scraper.WaitForElementsAsync(By.XPath(".//ul[@class='pagination']//li"));
@@ -25,7 +21,7 @@ namespace JobsWebScraper.Scrapers
             List<Job> jobsLink = new List<Job>();
 
             ReadOnlyCollection<IWebElement> jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tr[@class='data-row']"));
-            
+
             foreach (var job in jobsList)
             {
                 var titleLink = job.FindElement(By.ClassName("jobTitle-link"));
@@ -56,7 +52,7 @@ namespace JobsWebScraper.Scrapers
                 var page = await scraper.WaitForElementAsync(By.XPath($".//a[@title='Page {i}']"));
                 await scraper.ClickElementAsync(page);
                 jobsList = await scraper.WaitForElementsAsync(By.XPath(".//tr[@class='data-row']"));
-                
+
                 foreach (var job in jobsList)
                 {
                     var titleLink = job.FindElement(By.ClassName("jobTitle-link"));
