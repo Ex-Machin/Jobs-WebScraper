@@ -27,8 +27,8 @@ namespace JobsWebScraper.Controllers
             // scrapers.Add("https://www.pl.issworld.com/kariera/oferty-pracy#skk-container", new ISS());
             // scrapers.Add("https://tfbank.teamtailor.com/jobs", new Tfbank());
             // scrapers.Add("https://klinikabocian.pl/klinika/kariera", new KlinikaBocian());
-            // scrapers.Add("https://recrewhr.pl/oferty-pracy/", new ReCrewHR());
-            // scrapers.Add("https://careers.marsh.com/eu/en/poland-warsaw-opportunities/", new Marsh());
+            // scrapers.Add("https://recrewhr.pl/oferty-pracy", new ReCrewHR());
+            scrapers.Add("https://careers.marsh.com/eu/en/poland-warsaw-opportunities", new Marsh());
 
             // var websitesForScraping = db.LoadWebsites();
 
@@ -38,7 +38,8 @@ namespace JobsWebScraper.Controllers
                 // "https://www.pl.issworld.com/kariera/oferty-pracy#skk-container",
                 // "https://tfbank.teamtailor.com/jobs",
                 // "https://klinikabocian.pl/klinika/kariera",
-                "https://recrewhr.pl/oferty-pracy/"
+                // "https://recrewhr.pl/oferty-pracy",
+                "https://careers.marsh.com/eu/en/poland-warsaw-opportunities"
             };
 
             foreach (string website in websitesForScraping)

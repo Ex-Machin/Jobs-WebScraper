@@ -79,6 +79,10 @@ namespace JobsWebScraper.Services
         public async Task ClickElementAsync(By by, int timeoutSeconds = 10)
         {
             var element = await WaitForElementAsync(by, timeoutSeconds);
+            if (element == null)
+            {
+                throw new Exception($"Element by {by} was not found");
+            }
             _ex.ExecuteScript("arguments[0].click();", element);
             _actions.MoveToElement(element).Click();
             int randomSleepTime = _rnd.Next(1, 3) * 1000; // from 1 to 3 seconds
