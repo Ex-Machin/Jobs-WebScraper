@@ -52,6 +52,11 @@ namespace JobsWebScraper.Services
             }
         }
 
+        public async Task Navigate(string url)
+        {
+            await Task.Run(() => _driver.Navigate().GoToUrl(url));
+        }
+
         public async Task<string> GetHtmlAsync(string url)
         {
             await Task.Run(() => _driver.Navigate().GoToUrl(url));
